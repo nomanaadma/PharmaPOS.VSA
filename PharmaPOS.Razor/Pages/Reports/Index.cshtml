@@ -1,0 +1,56 @@
+@page "/Reports"
+@model PharmaPOS.Razor.Pages.Reports.IndexModel
+@{
+	const string pageTitle = "Reports";
+	ViewData["Title"] = pageTitle;
+}
+
+<div class="page-title">
+    <div class="row align-items-center">
+        <div class="col-sm-4">
+            <h2 class="page-title-text d-inline-block">@ViewData["Title"]</h2>
+            <partial name="Partials/_Breadcrumb" model="new BreadcrumbItem[] { 
+				new(pageTitle) 
+			}" />
+        </div>
+    </div>
+</div>
+
+<div class="row text-center">
+    <div class="col-md-3">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <i class="las la-cart-plus font-36 text-success"></i>
+                <h3 class="mb-4">POS/Bill Report</h3>
+                <a asp-page="/Billing/Index" class="btn btn-white btn-sm"><i class="las la-laptop"></i> View</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <i class="las la-file-invoice-dollar font-36 text-info"></i>
+                <h3 class="mb-4">Purchase Report</h3>
+                <a asp-page="/Purchase/Index" class="btn btn-white btn-sm"><i class="las la-laptop"></i> View</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <i class="las la-pills font-36 text-twitter"></i>
+                <h3 class="mb-4">Inventory Report</h3>
+                <a asp-page="/Reports/Inventory" class="btn btn-white btn-sm"><i class="las la-laptop"></i> View</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <i class="las la-coins font-36 text-facebook"></i>
+                <h3 class="mb-4">Stats Report</h3>
+                <a asp-page="/Reports/IncomeExpense" class="btn btn-white btn-sm"><i class="las la-laptop"></i> View</a>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,69 @@
+@model PharmaPOS.Razor.Models.RoleFormViewModel
+
+@if (!string.IsNullOrEmpty(Model.Id))
+{
+	<input type="hidden" asp-for="Id" />
+}
+<div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+<div class="panel panel-default">
+	<div class="panel-body">
+		<div class="form-group">
+			<label class="col-form-label">User Role Name <span class="form-required">*</span></label>
+			<div class="input-group">
+				<div class="input-group-prepend">
+					<span class="input-group-text"><i class="las la-users-cog"></i></span>
+				</div>
+				<input type="text" asp-for="Name" class="form-control" placeholder="Enter User Role Name . . ." required>
+			</div>
+			<span asp-validation-for="Name" class="text-danger"></span>
+		</div>
+		<div class="form-group">
+			<label class="col-form-label">Description</label>
+			<div class="input-group">
+				<div class="input-group-prepend">
+					<span class="input-group-text"><i class="las la-paragraph"></i></span>
+				</div>
+				<textarea asp-for="Description" class="form-control" rows="3" placeholder="Enter Description . . ."></textarea>
+			</div>
+			<span asp-validation-for="Description" class="text-danger"></span>
+		</div>
+		<div class="mb-2">
+			<label class="col-form-label">Permission</label>
+			<div class="table-responsive">
+				<table class="table table-bordered table-striped userrole-table table-middle">
+					<tbody>
+						@foreach (var group in Model.PermissionsGroup)
+						{
+							<tr>
+								<td>@group.Key</td>
+								@for (var i = 0; i < 5; i++)
+								{
+									<td>
+										@if (i < group.Value.Count)
+										{
+											var perm = group.Value.ElementAt(i);
+											<div class="custom-control custom-checkbox">
+												<input type="checkbox"
+												       class="custom-control-input"
+												       name="Input.SelectedPermissions"
+												       id="@perm.Key"
+												       value="@perm.Key"
+												       @(Model.SelectedPermissions.Contains(perm.Key) ? "checked" : "")>
+												<label class="custom-control-label" for="@perm.Key">@perm.Value</label>
+											</div>
+										}
+									</td>
+								}
+							</tr>
+						}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+	<div class="panel-footer text-center">
+		<button type="submit" class="btn btn-primary"><i class="las la-save pr-2"></i> Save</button>
+		<a asp-page="/Roles/Index" class="btn btn-secondary"><i class="las la-times pr-2"></i> Cancel</a>
+	</div>
+</div>

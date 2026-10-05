@@ -1,0 +1,27 @@
+@page
+@model PharmaPOS.Razor.Pages.Suppliers.AddModel
+@{
+	var pageTitle = "Add Supplier";
+	ViewData["Title"] = pageTitle;
+}
+
+<div class="page-title">
+	<div class="row align-items-center">
+		<div class="col-sm-12">
+			<h2 class="page-title-text d-inline-block">@ViewData["Title"]</h2>
+			<partial name="Partials/_Breadcrumb" model='new BreadcrumbItem[] { 
+				new("Suppliers", Url.Page("/Suppliers/Index")),
+				new(pageTitle) 
+			}' />
+		</div>
+	</div>
+</div>
+
+<form method="post">
+	@Html.AntiForgeryToken()
+	<partial name="_SupplierForm" for="Input" />
+</form>
+
+@section Scripts {
+	<partial name="_ValidationScriptsPartial" />
+}

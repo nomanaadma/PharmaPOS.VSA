@@ -1,0 +1,15 @@
+﻿<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js"></script>
+<script>
+    $(document).ready(function () {
+        // Check if the validator is loaded
+        if ($.validator) {
+            // Override the default date validation
+            $.validator.methods.date = function (value, element) {
+                // This regex strictly allows dd/mm/yyyy or d/m/yyyy
+                var dateRegex = /^(0?[1-9]|[12][0-9]|3[01])[\/](0?[1-9]|1[012])[\/]\d{4}$/;
+                return this.optional(element) || dateRegex.test(value);
+            };
+        }
+    });
+</script>

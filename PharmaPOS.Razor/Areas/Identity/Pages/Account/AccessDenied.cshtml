@@ -1,0 +1,21 @@
+﻿@page
+@model AccessDeniedModel
+@{
+	Layout = "~/Pages/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Access denied";
+}
+
+<div class="page-title">
+	<div class="row align-items-center">
+		<div class="col-sm-12">
+			<h2 class="page-title-text d-inline-block">@ViewData["Title"]</h2>
+			<div class="breadcrumbs d-inline-block">
+				<ul>
+					<li><a href="/">Dashboard</a></li>
+					<li>@ViewData["Title"]</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+<p style="color: var(--danger)">You don't have permission to access this resource.</p>

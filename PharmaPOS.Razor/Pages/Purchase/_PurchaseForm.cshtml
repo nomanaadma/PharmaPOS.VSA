@@ -1,0 +1,215 @@
+@model PharmaPOS.Razor.Models.PurchaseFormModel
+
+@if (Model.Id > 0)
+{
+	<input type="hidden" asp-for="Id" />
+}
+
+<div class="panel panel-default">
+	<div class="panel-body">
+		<div class="row">
+			<div class="col-md-6">
+				<div class="form-group">
+					<label>Suppliers <span class="form-required">*</span></label>
+					<div class="input-group">
+						<div class="input-group-prepend"><span class="input-group-text"><i class="las la-id-card"></i></span></div>
+						<select asp-for="Supplier" asp-items="Model.Suppliers" class="custom-select">
+							<option value="">Select Suppliers</option>
+						</select>
+					</div>
+					<span asp-validation-for="Supplier" class="text-danger"></span>
+				</div>
+				<div class="form-group">
+					<label>Purchase Date <span class="form-required">*</span></label>
+					<div class="input-group">
+						<div class="input-group-prepend"><span class="input-group-text"><i class="las la-calendar-alt"></i></span></div>
+						<input asp-for="Date" type="text" class="form-control bg-white date" placeholder="Purchase Date" readonly/>
+					</div>
+					<span asp-validation-for="Date" class="text-danger"></span>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="form-group">
+					<label>Note</label>
+					<div class="input-group">
+						<div class="input-group-prepend"><span class="input-group-text"><i class="las la-paragraph"></i></span></div>
+						<textarea asp-for="Note" class="form-control" placeholder="Enter Note or Comment . . ."></textarea>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="purchase-items">
+			<table class="table table-input">
+				<thead>
+				<tr>
+					<th>Name<span class="form-required">*</span></th>
+					<th>Batch No<span class="form-required">*</span></th>
+					<th>Expiry Date<span class="form-required">*</span></th>
+					<th>Packing Qty</th>
+					<th>Quantity<span class="form-required">*</span></th>
+					<th>Purchase Price<span class="form-required">*</span></th>
+					<th>Sale Price<span class="form-required">*</span></th>
+					<th>Gross</th>
+					<th>Discount</th>
+					<th>Tax</th>
+					<th>Price<span class="form-required">*</span></th>
+					<th></th>
+				</tr>
+				</thead>
+				<tbody>
+				@if (Model.Items.Any())
+				{
+					for (var i = 0; i < Model.Items.Count; i++)
+					{
+						<tr class="item-row">
+							<td>
+								<textarea asp-for="Items[i].Name" class="item-name" required></textarea>
+								<input type="hidden" asp-for="Items[i].MedicineId" class="item-id"/>
+								<input type="hidden" asp-for="Items[i].Id" />
+							</td>
+							<td>
+								<textarea asp-for="Items[i].Batch" class="item-batch" required></textarea>
+							</td>
+							<td>
+								<input asp-for="Items[i].Expiry" type="text" class="item-expiry exp-date p-2 datetimepicker-input" required/>
+							</td>
+							<td>
+								<textarea asp-for="Items[i].Pqty" class="item-pqty"></textarea>
+							</td>
+							<td>
+								<textarea asp-for="Items[i].Qty" class="item-qty" required></textarea>
+							</td>
+							<td>
+								<textarea asp-for="Items[i].Purchaseprice" class="item-purchaseprice" required></textarea>
+							</td>
+							<td>
+								<textarea asp-for="Items[i].SalePrice" class="item-saleprice" required></textarea>
+							</td>
+							<td>
+								<input asp-for="Items[i].Gross" type="text" class="item-gross" readonly/>
+							</td>
+							<td>
+								<div class="row no-gutters">
+									<div class="col">
+										<select asp-for="Items[i].DiscountType" class="custom-select border-light item-discounttype" 
+										        asp-items="Html.GetEnumSelectList<DiscountType>()">
+										</select>
+									</div>
+									<div class="col">
+										<textarea asp-for="Items[i].Discount" class="item-discount"></textarea>
+										<input asp-for="Items[i].DiscountValue" type="text" class="item-discountvalue" readonly/>
+									</div>
+								</div>
+							</td>
+							<td class="invoice-tax">
+								<input asp-for="Items[i].Tax" type="text" class="item-tax"/>
+								<input asp-for="Items[i].TaxPrice" type="text" class="item-taxprice" readonly/>
+							</td>
+							<td>
+								<textarea asp-for="Items[i].Price" class="bg-white item-price" required readonly></textarea>
+							</td>
+							<td>
+								<a class="badge badge-danger badge-sm badge-pill delete m-1">Delete</a>
+							</td>
+						</tr>
+					}
+				}
+				else
+				{
+					<tr class="item-row">
+						<td>
+							<textarea name="Input.Items[0].Name" class="item-name" required></textarea>
+							<input type="hidden" name="Input.Items[0].MedicineId" class="item-id"/>
+							<input type="hidden" name="Input.Items[0].Id" value="0" />
+						</td>
+						<td>
+							<textarea name="Input.Items[0].Batch" class="item-batch" required></textarea>
+						</td>
+						<td>
+							<input type="text" name="Input.Items[0].Expiry" class="item-expiry exp-date p-2 datetimepicker-input" required/>
+						</td>
+						<td>
+							<textarea name="Input.Items[0].Pqty" class="item-pqty"></textarea>
+						</td>
+						<td>
+							<textarea name="Input.Items[0].Qty" class="item-qty" required></textarea>
+						</td>
+						<td>
+							<textarea name="Input.Items[0].Purchaseprice" class="item-purchaseprice" required></textarea>
+						</td>
+						<td>
+							<textarea name="Input.Items[0].Saleprice" class="item-saleprice" required></textarea>
+						</td>
+						<td>
+							<input type="text" name="Input.Items[0].Gross" class="item-gross" value="0" readonly/>
+						</td>
+						<td>
+							<div class="row no-gutters">
+								<div class="col">
+									<select name="Input.Items[0].Discounttype" class="custom-select border-light item-discounttype" 
+									        asp-items="Html.GetEnumSelectList<DiscountType>()">
+									</select>
+								</div>
+								<div class="col">
+									<textarea name="Input.Items[0].Discount" class="item-discount">0</textarea>
+									<input type="text" name="Input.Items[0].Discountvalue" class="item-discountvalue" value="0" readonly/>
+								</div>
+							</div>
+						</td>
+						<td class="invoice-tax">
+							<input type="text" name="Input.Items[0].Tax" class="item-tax" value="0"/>
+							<input type="text" name="Input.Items[0].Taxprice" class="item-taxprice" value="0" readonly/>
+						</td>
+						<td>
+							<textarea name="Input.Items[0].Price" class="bg-white item-price" required readonly></textarea>
+						</td>
+						<td>
+							<a class="badge badge-danger badge-sm badge-pill delete m-1">Delete</a>
+						</td>
+					</tr>
+				}
+
+				<tr>
+					<td colspan="12">
+						<div class="add-items d-inline-block">
+							<a class="btn btn-success btn-sm m-1"><i class="icon-plus mr-1"></i> Add Item</a>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="5" class="blank"></td>
+					<td colspan="3" class="total-line"><label class="p-2">Sub Total</label></td>
+					<td colspan="4" class="total-value">
+						<input asp-for="SubTotal" type="text" class="form-transparent p-2 total-price" readonly/>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="5" class="blank"></td>
+					<td colspan="3" class="total-line"><label class="p-2">Discount</label></td>
+					<td colspan="4" class="total-value">
+						<input asp-for="Discount" type="text" class="form-transparent p-2 total-discount" readonly/>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="5" class="blank"></td>
+					<td colspan="3" class="total-line"><label class="p-2">Tax</label></td>
+					<td colspan="4" class="total-value">
+						<input asp-for="Tax" type="text" class="form-transparent p-2 total-tax" readonly/>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="5" class="blank"></td>
+					<td colspan="3" class="total-line"><label class="p-2">Amount</label></td>
+					<td colspan="4" class="total-value">
+						<input asp-for="Amount" type="text" class="form-transparent p-2 total-amount" readonly/>
+					</td>
+				</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+	<div class="panel-footer text-center">
+		<button type="submit" name="submit" class="btn btn-primary"><i class="las la-save pr-2"></i> Save</button>
+	</div>
+</div>

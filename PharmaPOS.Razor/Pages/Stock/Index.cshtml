@@ -1,0 +1,166 @@
+@page "/Medicine/Stock"
+@using PharmaPOS.Application.Common.Authorization
+@model PharmaPOS.Razor.Pages.Stock.IndexModel
+@{
+	var pageTitle = ViewData["Title"];
+	
+	var canPurchaseView = User.HasPermission(Permissions.Purchase.View);
+	var canPurchaseEdit = User.HasPermission(Permissions.Purchase.Edit);
+	var canEdit = User.HasPermission(Permissions.Stock.View);
+	var canDelete = User.HasPermission(Permissions.Stock.Delete);
+
+	var canAction = canPurchaseView || canPurchaseEdit || canEdit || canDelete;
+}
+
+<div class="page-title">
+    <div class="row align-items-center">
+        <div class="col-sm-4">
+            <h2 class="page-title-text d-inline-block">@pageTitle</h2>
+            <partial name="Partials/_Breadcrumb" model='new BreadcrumbItem[] { 
+				new(pageTitle?.ToString() ?? "Live Stock") 
+			}' />
+        </div>
+        <div class="col-sm-8 text-right">
+            <a asp-page="/Stock/Index" asp-route-type="live" class="btn btn-white btn-sm mr-2"><i class="las la-calendar text-success mr-2"></i> Live Stock</a>
+            <div class="dropdown d-inline-block mr-2">
+                <a class="btn btn-white btn-sm dropdown-toggle" data-toggle="dropdown"><i class="las la-calendar text-danger pr-2"></i> Expire Stock</a>
+                <ul class="dropdown-menu dropdown-menu-right">
+	                <li><a asp-page="/Stock/Index" asp-route-type="expired">Expired</a></li>
+	                <li><a asp-page="/Stock/Index" asp-route-type="willexpirein1">Expire in 1 month</a></li>
+	                <li><a asp-page="/Stock/Index" asp-route-type="willexpirein2">Expire in 2 months</a></li>
+	                <li><a asp-page="/Stock/Index" asp-route-type="willexpirein3">Expire in 3 months</a></li>
+	                <li><a asp-page="/Stock/Index" asp-route-type="willexpirein6">Expire in 6 months</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="panel panel-default">
+	<div class="panel-body">
+		<div class="table-responsive stock-table">
+			<table class="table table-middle table-bordered table-striped datatable-count-table stock-list">
+				<thead>
+				<tr>
+					<th>#</th>
+					<th>Name</th>
+					<th>Batch</th>
+					<th>Expiry</th>
+					<th>Purchase Price</th>
+					<th>Sale Price</th>
+					<th>Total Purchase</th>
+					<th>Total Sale</th>
+					<th>Profit</th>
+					<th>Qty</th>
+					<th>Sold</th>
+					<th>Available</th>
+					@if (canAction)
+					{
+						<th></th>
+					}
+				</tr>
+				</thead>
+				<tbody>
+				@{ var i = 1; }
+				@foreach (var item in Model.Stocks)
+				{
+					<tr>
+						<td>@(i++)</td>
+						<td class="text-primary medicine">@item.Name</td>
+						<td class="batch">@item.Batch</td>
+						<td class="expiry text-danger">@item.Expiry</td>
+						<td class="purchase">@item.PurchasePrice.ToCrF2()</td>
+						<td class="sale">
+							@if (item.SalePrice > 0)
+							{
+								<text>@item.SalePrice.ToCrHash()</text>
+							}
+						</td>
+						<td>@item.TotalPurchase.ToCrF2()</td>
+						<td>
+							@if (item.TotalSales > 0)
+							{
+								<text>@item.TotalSales.ToCrHash()</text>
+							}
+						</td>
+						<td>
+							@if (item.Profit > 0)
+							{
+								<text>@item.Profit.ToCrHash()</text>
+							}
+						</td>
+						<td class="qty">@item.Qty</td>
+						<td class="sold">@item.Sold</td>
+						<td class="available">@item.Available.ToZeroHash()</td>
+						@if (canAction)
+						{
+							<td class="table-action">
+								@if (canPurchaseView || canPurchaseEdit || canEdit)
+								{
+									<div class="dropdown d-inline-block">
+										<a class="text-primary edit dropdown-toggle" data-toggle="dropdown"><i class="las la-ellipsis-h"></i></a>
+										<ul class="dropdown-menu dropdown-menu-right">
+											@if (canEdit)
+											{
+												<li><a class="edit-stock" data-id="@item.Id" data-medicineid="@item.MedicineId" data-medicine="@item.Name"><i class="las la-pen-nib pr-2"></i>Update Stock</a></li>
+											}
+											@if (canPurchaseView)
+											{
+												<li><a asp-page="/Purchase/View" asp-route-id="@item.PurchaseId"><i class="las la-laptop pr-2"></i>Purchase View</a></li>
+											}
+											@if (canPurchaseEdit)
+											{
+												<li><a asp-page="/Purchase/Edit" asp-route-id="@item.PurchaseId"><i class="las la-edit pr-2"></i>Purchase Edit</a></li>
+											}
+										</ul>
+									</div>
+								}
+								@if (canDelete)
+								{
+									<a class="table-delete text-danger delete" data-toggle="tooltip" title="Remove from Inventory">
+										<i class="las la-trash-alt"></i>
+										<input type="hidden" value="@item.Id"/>
+									</a>
+								}
+							</td>
+						}
+					</tr>
+				}
+				</tbody>
+				<tfoot>
+				<tr>
+					<th></th>
+					<th></th>
+					<th></th>
+					<th></th>
+					<th></th>
+					<th></th>
+					<th></th>
+					<th></th>
+					<th></th>
+					<th></th>
+					<th></th>
+					<th></th>
+					@if (canAction)
+					{
+						<th></th>
+					}
+				</tr>
+				</tfoot>
+			</table>
+		</div>
+	</div>
+</div>
+
+@if(canEdit) {
+	<partial name="Partials/_EditStockModal" />
+}
+
+@if (canDelete)
+{
+	<partial name="Partials/_DeleteModal" model='@("/Stock/Index")' />
+}
+
+@section Scripts {
+	<script type="text/javascript" src="~/js/stock.js"></script>
+}

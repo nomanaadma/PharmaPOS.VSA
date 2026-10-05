@@ -1,0 +1,22 @@
+@* @model IEnumerable<PharmaPOS.Razor.Models.BreadcrumbItem>? *@
+
+@if (Model != null)
+{
+	<div class="breadcrumbs d-inline-block">
+		<ul>
+			<li><a href="/">Dashboard</a></li>
+		
+			@foreach (var item in Model)
+			{
+				if (string.IsNullOrEmpty(item.Url))
+				{
+					<li>@item.Title</li>
+				}
+				else
+				{
+					<li><a href="@item.Url">@item.Title</a></li>
+				}
+			}
+		</ul>
+	</div>
+}

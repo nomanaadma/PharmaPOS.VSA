@@ -1,0 +1,75 @@
+@page "/Reports/IncomeExpense"
+@model PharmaPOS.Razor.Pages.Reports.IncomeExpenseModel
+@{
+    const string pageTitle = "Stats Report";
+    ViewData["Title"] = pageTitle;
+}
+
+<div class="page-title">
+    <div class="row align-items-center">
+        <div class="col-sm-4">
+            <h2 class="page-title-text d-inline-block">@ViewData["Title"]</h2>
+            <partial name="Partials/_Breadcrumb" model="new BreadcrumbItem[] { 
+				new(pageTitle) 
+			}" />
+        </div>
+        <div class="col-sm-8 text-right">
+            <div style="display: inline-block;">
+                <input type="text" name="medicine_name" class="medicine_report_name form-control item-name ui-autocomplete-input" autocomplete="off" placeholder="Search Medicine" value="@Model.Stats.MedicineName">
+                <input type="hidden" name="medicineId" class="form-control item-medicine-id" value="@Model.Stats.MedicineId">
+            </div>
+            <div class="btn btn-white btn-sm text-left mr-2">
+                <i class="las la-filter text-danger pr-2"></i>
+                <input type="text" class="table-date-range" data-start="@Model.Stats.StartDate.Format()" data-end="@Model.Stats.EndDate.Format()" data-route="/Reports/IncomeExpense?">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6 col-lg-4">
+        <div class="dashboard-stat">
+            <div class="content"><h4 class="text-dark">@Model.Stats.SalesAmount.ToCrHash()</h4><span class="text-dark">Sales</span></div>
+            <div class="icon"><i class="las la-money-check-alt text-primary"></i></div>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-4">
+        <div class="dashboard-stat">
+            <div class="content"><h4 class="text-dark">@Model.Stats.PurchaseAmount.ToCrHash()</h4> <span class="text-dark">Purchase</span></div>
+            <div class="icon"><i class="las la-file-invoice-dollar text-secondary"></i></div>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-4">
+        <div class="dashboard-stat">
+            <div class="content"><h4 class="text-dark">@Model.Stats.Profit.ToCrHash()</h4> <span class="text-dark">Profit</span></div>
+            <div class="icon"><i class="las la-file-invoice-dollar text-secondary"></i></div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    @if (Model.Stats.Quantity > 0)
+    {
+        <div class="col-md-6 col-lg-4">
+            <div class="dashboard-stat">
+                <div class="content"><h4 class="text-dark">@Model.Stats.Quantity.Value.ToZeroHash()</h4><span class="text-dark">Quantity</span></div>
+                <div class="icon"><i class="las la-file-invoice-dollar text-secondary"></i></div>
+            </div>
+        </div>
+    }
+    <div class="col-md-6 col-lg-4">
+        <div class="dashboard-stat">
+            <div class="content"><h4 class="text-dark">@Model.Stats.TaxAmount.ToCrHash()</h4><span class="text-dark">Tax Amount</span></div>
+            <div class="icon"><i class="las la-percent text-warning"></i></div>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-4">
+        <div class="dashboard-stat">
+            <div class="content"><h4 class="text-dark">@Model.Stats.DiscountAmount.ToCrHash()</h4> <span class="text-dark">Discount Amount</span></div>
+            <div class="icon"><i class="las la-money-check text-info"></i></div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+	<script type="text/javascript" src="~/js/income_expense.js"></script>
+}

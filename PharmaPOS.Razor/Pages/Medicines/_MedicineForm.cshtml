@@ -1,0 +1,158 @@
+@model PharmaPOS.Razor.Models.MedicineViewModel
+
+@if (Model.Id > 0)
+{
+	<input type="hidden" asp-for="Id" />
+}
+<div class="panel panel-default">
+	<div class="panel-body">
+		<div class="row">
+			<div class="col-md-6">
+				<div class="form-group">
+					<label>Medicine Name <span class="form-required">*</span></label>
+					<div class="input-group">
+						<div class="input-group-prepend">
+							<span class="input-group-text"><i class="las la-pills"></i></span>
+						</div>
+						<input type="text" asp-for="Name" class="form-control" placeholder="Enter Medicine Name . . .">
+					</div>
+					<span asp-validation-for="Name" class="text-danger"></span>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="form-group">
+					<label>Medicine Category <span class="form-required">*</span></label>
+					<div class="input-group">
+						<div class="input-group-prepend">
+							<span class="input-group-text"><i class="las la-tag"></i></span>
+						</div>
+						<select asp-for="CategoryId" class="custom-select" asp-items="Model.Categories">
+							<option value="">Select Category</option>
+						</select>
+					</div>
+					<span asp-validation-for="CategoryId" class="text-danger"></span>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="form-group">
+					<label>Medicine Company <span class="form-required">*</span></label>
+					<div class="input-group">
+						<div class="input-group-prepend">
+							<span class="input-group-text"><i class="las la-building"></i></span>
+						</div>
+						<input type="text" asp-for="Company" class="form-control" placeholder="Enter Medicine Company . . .">
+					</div>
+					<span asp-validation-for="Company" class="text-danger"></span>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="form-group">
+					<label>Medicine Generic <span class="form-required">*</span></label>
+					<div class="input-group">
+						<div class="input-group-prepend">
+							<span class="input-group-text"><i class="las la-mortar-pestle"></i></span>
+						</div>
+						<input type="text" asp-for="Generic" class="form-control" placeholder="Enter Medicine Generic . . .">
+					</div>
+					<span asp-validation-for="Generic" class="text-danger"></span>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="form-group">
+					<label>Medicine Group</label>
+					<div class="input-group">
+						<div class="input-group-prepend">
+							<span class="input-group-text"><i class="las la-object-group"></i></span>
+						</div>
+						<input type="text" asp-for="MedicineGroup" class="form-control" placeholder="Enter Medicine Group . . .">
+					</div>
+					<span asp-validation-for="MedicineGroup" class="text-danger"></span>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="row">
+					<div class="col-sm-6">
+						<div class="form-group">
+							<label>Unit <span class="form-required">*</span></label>
+							<div class="input-group">
+								<div class="input-group-prepend">
+									<span class="input-group-text"><i class="las la-atom"></i></span>
+								</div>
+								<input type="text" asp-for="Unit" class="form-control" placeholder="Enter Medicine unit . . .">
+							</div>
+							<span asp-validation-for="Unit" class="text-danger"></span>
+						</div>
+					</div>
+					<div class="col-sm-6">
+						<div class="form-group">
+							<label>Unit/Packing</label>
+							<div class="input-group">
+								<div class="input-group-prepend">
+									<span class="input-group-text"><i class="las la-atom"></i></span>
+								</div>
+								<input type="text" asp-for="UnitPacking" class="form-control" placeholder="Enter Unit/Packing . . .">
+							</div>
+							<span asp-validation-for="UnitPacking" class="text-danger"></span>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="form-group">
+					<label>Store Box</label>
+					<div class="input-group">
+						<div class="input-group-prepend">
+							<span class="input-group-text"><i class="las la-box"></i></span>
+						</div>
+						<input type="text" asp-for="StoreBox" class="form-control" placeholder="Enter Store Box or Drawer . . .">
+					</div>
+					<span asp-validation-for="StoreBox" class="text-danger"></span>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="row">
+					<div class="col-sm-6">
+						<div class="form-group">
+							<label>Min Level</label>
+							<div class="input-group">
+								<div class="input-group-prepend">
+									<span class="input-group-text"><i class="las la-level-down-alt"></i></span>
+								</div>
+								<input type="text" asp-for="MinLevel" class="form-control" placeholder="Enter Min Level . . .">
+							</div>
+							<span asp-validation-for="MinLevel" class="text-danger"></span>
+						</div>
+					</div>
+					<div class="col-sm-6">
+						<div class="form-group">
+							<label>Re-Order Level</label>
+							<div class="input-group">
+								<div class="input-group-prepend">
+									<span class="input-group-text"><i class="las la-level-down-alt"></i></span>
+								</div>
+								<input type="text" asp-for="ReOrderLevel" class="form-control" placeholder="Enter Re-Order Level . . .">
+							</div>
+							<span asp-validation-for="ReOrderLevel" class="text-danger"></span>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="form-group">
+					<label>Note</label>
+					<div class="input-group">
+						<div class="input-group-prepend">
+							<span class="input-group-text"><i class="las la-paragraph"></i></span>
+						</div>
+						<textarea asp-for="Note" class="form-control" placeholder="Enter Note . . ."></textarea>
+					</div>
+					<span asp-validation-for="Note" class="text-danger"></span>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="panel-footer text-center">
+		<button type="submit" class="btn btn-primary"><i class="las la-save pr-2"></i> Save</button>
+		<a asp-page="/Medicines/Index" class="btn btn-secondary"><i class="las la-times pr-2"></i> Cancel</a>
+	</div>
+</div>

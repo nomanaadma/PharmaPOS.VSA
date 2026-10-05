@@ -1,0 +1,81 @@
+@page "/Medicines/Purchase"
+@using PharmaPOS.Application.Common.Authorization
+@model PharmaPOS.Razor.Pages.Purchase.IndexModel
+@{
+	const string pageTitle = "Purchase";
+	ViewData["Title"] = pageTitle;
+	
+	var canAdd = User.HasPermission(Permissions.Purchase.Add);
+	var canView = User.HasPermission(Permissions.Purchase.View);
+	var canEdit = User.HasPermission(Permissions.Purchase.Edit);
+	var canDelete = User.HasPermission(Permissions.Purchase.Delete);
+	var canAction = canView || canEdit || canDelete;
+}
+
+<div class="page-title">
+	<div class="row align-items-center">
+		<div class="col-sm-4">
+			<h2 class="page-title-text d-inline-block">@ViewData["Title"]</h2>
+			<partial name="Partials/_Breadcrumb" model="new BreadcrumbItem[] { 
+				new(pageTitle) 
+			}" />
+		</div>
+		<div class="col-sm-8 text-right">
+			@if (canAdd)
+			{
+				<a class="btn btn-primary btn-sm" asp-page="/Purchase/Add">
+					<i class="las la-plus pr-2"></i> New Purchase
+				</a>
+			}
+		</div>
+	</div>
+</div>
+
+<div class="panel panel-default">
+	<div class="panel-body">
+		<div class="table-responsive hide_id">
+			<table class="table table-middle table-bordered table-striped datatable-table-custom">
+				<thead>
+					<tr>
+						<th>#</th>
+						<th>Supplier Name</th>
+						<th>Sub Total</th>
+						<th>Tax</th>
+						<th>Discount</th>
+						<th>Amount</th>
+						<th>Purchase Date</th>
+						@if (canAction)
+						{
+							<th class="action-th"></th>
+						}
+					</tr>
+				</thead>
+				<tbody></tbody>
+				<tfoot>
+					<tr>
+						<th></th>
+						<th></th>
+						<th></th>
+						<th></th>
+						<th></th>
+						<th></th>
+						<th></th>
+						@if (canAction)
+						{
+							<th></th>
+						}
+					</tr>
+				</tfoot>
+			</table>
+		</div>
+	</div>
+</div>
+
+@if (canDelete)
+{
+	<partial name="Partials/_DeleteModal" model='@("/Purchase/Index")' />
+}
+
+@section Scripts {
+	<script type="text/javascript" src="~/js/purchase_list.js"></script>
+}

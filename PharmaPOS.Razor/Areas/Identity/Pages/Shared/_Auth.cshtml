@@ -1,0 +1,47 @@
+@using PharmaPOS.Application.Settings.Queries.GetSettings
+@{
+	var siteInfo = await Mediator.Send(new GetSettingsQuery());
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	<title>@ViewData["Title"] | @siteInfo.Name</title>
+	<link rel="icon" type="image/x-icon" href="@siteInfo.Favicon">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700" />
+	<script src="https://cdn.tailwindcss.com"></script>
+	<link rel="stylesheet" href="~/css/style.min.css" asp-append-version="true" />
+	<script src="~/js/vendor.min.js" asp-append-version="true"></script>
+	<script src="~/js/auth_forms.js" asp-append-version="true"></script>
+	<style>
+		.status-container .p-5 {
+			padding-top: 0 !important;
+			padding-left: 10px !important;
+			padding-right: 10px !important;
+		}
+		.status-container.mt-5 { 
+			margin-top: 0 !important;
+		}
+
+		.status-container .shadow-sm { 
+			box-shadow: none !important;
+		}
+
+	</style>
+</head>
+<body>
+	<div class="lgn-background" style="background-image: url('@siteInfo.LgBackground');">
+		<div class="lgn-wrapper rounded-4 pt-4 p-2">
+			<div class="lgn-logo text-center">
+				<a href="/" class="no-event">
+					<img src="@siteInfo.Logo" alt="@siteInfo.Name">
+				</a>
+			</div>
+			<div class="text-gray-900 fw-bolder lgn-title">@ViewData["Title"]</div>
+			@RenderBody()
+		</div>
+	</div>
+	@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

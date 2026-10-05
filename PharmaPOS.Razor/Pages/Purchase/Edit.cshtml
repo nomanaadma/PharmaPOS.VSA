@@ -1,0 +1,30 @@
+@page "/Medicines/Purchase/Edit/{id:int}"
+@model PharmaPOS.Razor.Pages.Purchase.EditModel
+@{
+	var pageTitle = "Edit Purchase";
+	ViewData["Title"] = pageTitle;
+}
+
+<div class="page-title">
+	<div class="row align-items-center">
+		<div class="col-sm-12">
+			<h2 class="page-title-text d-inline-block">@ViewData["Title"]</h2>
+			<partial name="Partials/_Breadcrumb" model='new BreadcrumbItem[] { 
+				new("Purchase", Url.Page("/Purchase/Index")),
+				new(pageTitle) 
+			}' />
+		</div>
+	</div>
+</div>
+
+<form method="post" class="purchase_form">
+	@Html.AntiForgeryToken()
+	<partial name="_PurchaseForm" for="Input" />
+</form>
+
+@section Scripts {
+	<partial name="_ValidationScriptsPartial" />
+	<link rel="stylesheet" href="~/css/bootstrap-datetimepicker.min.css">
+	<script type="text/javascript" src="~/js/bootstrap-datetimepicker.min.js"></script>
+	<script type="text/javascript" src="~/js/purchase.js"></script>
+}

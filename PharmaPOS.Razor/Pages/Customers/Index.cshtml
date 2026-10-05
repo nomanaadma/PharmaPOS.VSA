@@ -1,0 +1,116 @@
+@page
+@using PharmaPOS.Application.Common.Authorization
+@model PharmaPOS.Razor.Pages.Customers.IndexModel
+@{
+	const string pageTitle = "Customers";
+	ViewData["Title"] = pageTitle;
+	
+	var canAdd = User.HasPermission(Permissions.Customer.Add);
+	var canView = User.HasPermission(Permissions.Customer.View);
+	var canEdit = User.HasPermission(Permissions.Customer.Edit);
+	var canDelete = User.HasPermission(Permissions.Customer.Delete);
+	var canAction = canView || canEdit || canDelete;
+}
+
+<div class="page-title">
+	<div class="row align-items-center">
+		<div class="col-sm-4">
+			<h2 class="page-title-text d-inline-block">@ViewData["Title"]</h2>
+			<partial name="Partials/_Breadcrumb" model="new BreadcrumbItem[] { 
+				new(pageTitle) 
+			}" />
+		</div>
+		<div class="col-sm-8 text-right">
+			@if (canAdd)
+			{
+				<a class="btn btn-primary btn-sm" asp-page="/Customers/Add">
+					<i class="las la-plus pr-2"></i> New Customer
+				</a>
+			}
+		</div>
+	</div>
+</div>
+
+<div class="panel panel-default">
+	<div class="panel-body">
+		<div class="table-responsive">
+			<table class="table table-middle table-bordered table-striped datatable-table">
+				<thead>
+					<tr class="table-heading">
+						<th>#</th>
+						<th>Customer Info</th>
+						<th>Gender</th>
+						<th>Email</th>
+						<th>Number</th>
+						<th>Status</th>
+						<th>Created Date</th>
+						@if (canAction)
+						{
+							<th></th>
+						}
+					</tr>
+				</thead>
+				<tbody>
+					@{ var index = 1; }
+					@foreach (var value in Model.Customers)
+					{
+						<tr>
+							<td>@index</td>
+							<td>
+								<p class="m-0 text-primary">@value.FirstName @value.LastName</p>
+							</td>
+							<td>@value.Gender</td>
+							<td>@value.Email</td>
+							<td>@value.Mobile</td>
+							<td>
+								<span class="label @value.Status.GetCssClass()">@value.Status</span>
+							</td>
+							<td>@value.CreatedDate?.Format()</td>
+							@if (canAction)
+							{
+								<td class="table-action">
+
+									@if (canView || canEdit)
+									{
+										<div class="dropdown d-inline-block">
+											<a class="text-primary edit dropdown-toggle" data-toggle="dropdown"><i class="las la-ellipsis-h"></i></a>
+											<ul class="dropdown-menu dropdown-menu-right">
+												@if (canView)
+												{
+													<li>
+														<a asp-page="/Customers/View" asp-route-id="@value.Id"><i class="las la-laptop pr-2"></i>View</a>
+													</li>
+												}
+												@if (canEdit)
+												{
+													<li>
+														<a 
+															asp-page="/Customers/Edit"
+															asp-route-id="@value.Id"
+														><i class="las la-edit pr-2"></i>Edit</a>
+													</li>
+												}
+											</ul>
+										</div>
+									}
+
+									@if (canDelete)
+									{
+										<a class="table-delete text-danger delete" data-toggle="tooltip" title="Delete"><i class="las la-trash-alt"></i><input type="hidden" value="@value.Id"></a>
+									}
+
+								</td>
+							}
+						</tr>
+						index++;
+					}
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+
+@if (canDelete)
+{
+	<partial name="Partials/_DeleteModal" model='@("/Customers/Index")' />
+}

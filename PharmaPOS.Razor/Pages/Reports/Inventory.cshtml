@@ -1,0 +1,101 @@
+@page "/Reports/Inventory"
+@model PharmaPOS.Razor.Pages.Reports.InventoryModel
+@{
+    const string pageTitle = "Inventory Report";
+    ViewData["Title"] = pageTitle;
+}
+
+<div class="page-title">
+    <div class="row align-items-center">
+        <div class="col-sm-4">
+            <h2 class="page-title-text d-inline-block">@ViewData["Title"]</h2>
+            <partial name="Partials/_Breadcrumb" model="new BreadcrumbItem[] { 
+				new(pageTitle) 
+			}" />
+        </div>
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-body">
+        <div class="table-responsive">
+            <table class="table table-middle table-bordered table-striped datatable-count-table report_inventory">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Medicine</th>
+                        <th>Purchase</th>
+                        <th>Sales</th>
+                        <th>Profit</th>
+                        <th>Reorderlevel</th>
+                        <th>Live Stock</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{ var index = 1; }
+                    @foreach (var value in Model.Inventory)
+                    {
+                        <tr>
+                            <td>@(index++)</td>
+                            <td>
+                                <p class="text-primary mb-0">@value.MedicineName</p>
+                            </td>
+                            <td>@value.TotalPurchase.ToCrF2()</td>
+                            <td>
+                                @if (value.TotalSales > 0)
+                                {
+                                    <text>@value.TotalSales.ToCrHash()</text>
+                                }
+                            </td>
+                            <td>
+                                @if (value.TotalSales > 0 || value.TotalPurchase > 0)
+                                {
+                                    <text>@value.Profit.ToCrHash()</text>
+                                }
+                            </td>
+                            <td>
+	                            @if (value.ReorderLevel > 0)
+	                            {
+		                            <text>@value.ReorderLevel</text>
+	                            }
+                            </td>
+                            <td>
+	                            @if (value.LiveStock > 0)
+	                            {
+		                            <text>@value.LiveStock</text>
+	                            }
+                            </td>
+                            <td>
+                                @if (value.MinLevel >= value.LiveStock)
+                                {
+                                    <span class="badge badge-sm badge-danger">Minlevel</span>
+                                }
+                                else if (value.ReorderLevel >= value.LiveStock)
+                                {
+                                    <span class="badge badge-sm badge-warning">Reorderlevel</span>
+                                }
+                                else
+                                {
+                                    <span class="badge badge-sm badge-primary">Normal</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,150 @@
+@page "/Medicines/Billing/View/{id:int}"
+@using PharmaPOS.Application.Common.Authorization
+@model PharmaPOS.Razor.Pages.Billing.ViewModel
+@{
+	const string pageTitle = "Bill View";
+	ViewData["Title"] = pageTitle;
+	
+	var canEdit = User.HasPermission(Permissions.Billing.Edit);
+}
+
+<div class="page-title">
+	<div class="row align-items-center">
+		<div class="col-sm-7">
+			<h2 class="page-title-text d-inline-block">@ViewData["Title"]</h2>
+			<partial name="Partials/_Breadcrumb" model='new BreadcrumbItem[] { 
+				new("POS/Bill", Url.Page("/Billing/Index")),
+				new(pageTitle) 
+			}' />
+		</div>
+		<div class="col-sm-5 text-right">
+			@if (canEdit)
+			{
+				<a
+					asp-page="/Billing/Edit"
+					asp-route-id="@Model.Bill.Id"
+					class="btn btn-primary btn-sm"><i class="las la-edit mr-2"></i>Edit</a>
+			}
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-12">
+		<div id="printableArea" class="inv-template mb-4">
+			<div class="inv-template-bdy table-responsive p-4">
+				<div class="company table-responsive">
+					<table>
+						<tbody>
+						<tr>
+							<td class="info">
+								<div class="logo"><img src="@Model.SiteInfo.Logo" alt="logo"></div>
+								<div class="name">@Model.SiteInfo.LegalName</div>
+								<div class="text">@Model.SiteInfo.Address.ToString()</div>
+							</td>
+							<td class="text-right">
+								<div class="title">Invoice</div>
+							</td>
+						</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="meta table-responsive">
+					<table>
+						<tbody>
+						<tr>
+							<td class="bill-to v-aling-bottom">
+								<div class="heading">Bill To</div>
+								<div class="title">@Model.Bill.Name</div>
+								<div class="text">@Model.Bill.Email</div>
+								<div class="text">@Model.Bill.Mobile</div>
+							</td>
+							<td class="info v-aling-bottom">
+								<table class="text-right">
+									<tbody>
+										<tr>
+											<td class="text">#</td>
+											<td class="text w-min-130">@Model.Bill.Id.ToString("D5")</td>
+										</tr>
+										<tr>
+											<td class="text">Date</td>
+											<td class="text w-min-130">@Model.Bill.Date.Format()</td>
+										</tr>
+										<tr>
+											<td class="text">Payment Method</td>
+											<td class="text w-min-130">@Model.Bill.PaymentMethodName</td>
+										</tr>
+									</tbody>
+								</table>
+							</td>
+						</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="item table-responsive">
+					<table>
+						<thead>
+							<tr>
+								<th>Name</th>
+								<th>Batch No</th>
+								<th>Expiry Date</th>
+								<th>Quantity</th>
+								<th>Sale Price</th>
+								<th>Gross</th>
+								<th>Discount</th>
+								<th>Tax</th>
+								<th>Price</th>
+							</tr>
+						</thead>
+						<tbody>
+						
+							@foreach (var value in Model.Bill.Items)
+							{
+								<tr>
+									<td>@value.MedicineName</td>
+									<td>@value.BatchName</td>
+									<td>@(DateTime.TryParse(value.Expiry, out var date) ? date.ExpiryVisibleFormat() : value.Expiry)</td>
+									<td>@value.Qty.ToZeroHash()</td>
+									<td>@value.SalePrice</td>
+									<td>@value.Gross</td>
+									<td>@value.DiscountValue.ToZeroHash()</td>
+									<td>@value.TaxPrice.ToZeroHash()</td>
+									<td>@value.Price.ToZeroHash()</td>
+								</tr>
+							}
+							<tr class="total">
+								<td rowspan="5" colspan="5" class="blank"></td>
+								<td class="title" colspan="2">Sub Total</td>
+								<td class="value" colspan="2">@Model.Bill.SubTotal.ToCrF2()</td>
+							</tr>
+							<tr class="total">
+								<td class="title" colspan="2">Discount</td>
+								<td class="value" colspan="2">@Model.Bill.Discount.ToCrF2()</td>
+							</tr>
+							<tr class="total">
+								<td class="title" colspan="2">Tax</td>
+								<td class="value" colspan="2">@Model.Bill.Tax.ToCrF2()</td>
+							</tr>
+							<tr class="total">
+								<td class="title" colspan="2">Amount</td>
+								<td class="value" colspan="2">@Model.Bill.Amount.ToCrF2()</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="note">
+					<table>
+						<tbody>
+						<tr>
+							<td class="block align-top">
+								<span>Note</span>
+								<p>@Model.Bill.Note</p>
+							</td>
+						</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,115 @@
+@model PharmaPOS.Contracts.Responses.SettingResponse
+@using System.Security.Claims
+@using PharmaPOS.Application.Common.Authorization
+@{
+	
+	var userName = User.Identity?.Name?.Split('@').FirstOrDefault() ?? "Guest";
+	
+	var userRole = User.Claims.GetClaim(ClaimTypes.Role, "No Role");
+	
+	var firstName = User.Claims.GetClaim(ClaimTypes.GivenName);
+
+	var lastName = User.Claims.GetClaim(ClaimTypes.Surname);
+	
+	var displayName = (!string.IsNullOrEmpty(firstName) || !string.IsNullOrEmpty(lastName)) 
+		? $"{firstName} {lastName}".Trim() 
+		: userName;
+	
+}
+<div class="page-hdr">
+    <div class="row align-items-center">
+	    <div class="col-4 col-md-7 page-hdr-left">
+		    <!-- Logo Container -->
+		    <div id="logo">
+			    <div class="logo-icon">
+				    <a href="#"><img src="@Model.LogoIcon" alt="Icon"></a>
+			    </div>
+			    <div class="logo">
+				    <a href="#"><img src="@Model.Logo" alt="Logo"></a>
+			    </div>
+		    </div>
+	    </div>
+	    <div class="col-8 col-md-5 page-hdr-right">	
+		    <div class="page-hdr-desktop">
+			    
+			    @if (User.HasPermission(Permissions.Billing.Add))
+			    {
+				    <div class="page-menu">
+					    <a asp-page="/Billing/Add" data-toggle="tooltip" data-placement="bottom" title="New POS/Bill"><i class="las las la-cart-plus"></i></a>
+				    </div>
+			    }
+			    @if (User.HasPermission(Permissions.Purchase.Add))
+			    {
+				    <div class="page-menu">
+					    <a asp-page="/Purchase/Add" data-toggle="tooltip" data-placement="bottom" title="New Purchase"><i class="las la-file-invoice-dollar font-20"></i></a>
+				    </div>
+			    }
+
+			    @if (User.HasPermission(Permissions.Customer.Add))
+			    {
+				    <div class="page-menu">
+					    <a asp-page="/Customers/Add" data-toggle="tooltip" data-placement="bottom" title="New Customer"><i class="las la-user-md"></i></a>
+				    </div>
+			    }
+
+			    @if (User.HasPermission(Permissions.Stock.View))
+			    {
+				    <div class="page-menu menu-dropdown-wrapper menu-user">
+					    <a><i class="las la-balance-scale"></i></a>
+					    <div class="menu-dropdown menu-dropdown-right menu-dropdown-push-right">
+						    <div class="arrow arrow-right"></div>
+						    <div class="menu-dropdown-inner">
+							    <div class="menu-dropdown-head">Stock adjustment</div>
+							    <div class="menu-dropdown-body p-2">
+								    <ul class="menu-nav">
+									    <li><a asp-page="/Stock/Index" asp-route-type="live"><i class="las la-hourglass"></i><span>Live Stock</span></a></li>
+									    <li><a asp-page="/Stock/Index" asp-route-type="expired"><i class="las la-hourglass-end"></i><span>Expired Stock</span></a></li>
+									    <li><a asp-page="/Stock/Index" asp-route-type="willexpirein1"><i class="las la-hourglass-end"></i><span>Expire in 1 Month</span></a></li>
+									    <li><a asp-page="/Stock/Index" asp-route-type="willexpirein2"><i class="las la-hourglass-half"></i><span>Expire in 2 Month</span></a></li>
+									    <li><a asp-page="/Stock/Index" asp-route-type="willexpirein3"><i class="las la-hourglass-start"></i><span>Expire in 3 Month</span></a></li>
+									    <li><a asp-page="/Stock/Index" asp-route-type="willexpirein6"><i class="las la-hourglass-start"></i><span>Expire in 6 Month</span></a></li>
+								    </ul>
+							    </div>
+						    </div>
+					    </div>
+				    </div>
+			    }
+
+			    <div class="page-menu menu-dropdown-wrapper menu-user">
+				    <a><div><i class="las la-user-tie"></i></div></a>
+				    <div class="menu-dropdown menu-dropdown-right menu-dropdown-push-right">
+					    <div class="arrow arrow-right"></div>
+					    <div class="menu-dropdown-inner">
+						    <div class="menu-dropdown-head pb-3">
+							    <div class="tbl-cell">
+								    <i class="las la-user-tie"></i>
+							    </div>
+							    <div class="tbl-cell pl-2 text-left">
+								    <p class="m-0 font-18">@displayName</p>
+								    <p class="m-0 font-14">@userRole</p>
+							    </div>
+						    </div>
+						    <div class="menu-dropdown-body">
+							    <ul class="menu-nav">
+								    <li><a asp-area="Identity" asp-page="/Account/Manage/Index"><i class="las la-id-badge"></i><span>Profile</span></a></li>
+								    <li><a asp-area="Identity" asp-page="/Account/Manage/ChangePassword"><i class="las la-key"></i><span>Change Password</span></a></li>
+							    </ul>
+						    </div>
+						    <div class="menu-dropdown-footer text-right">
+							    <a href="javascript:void(0);" class="btn btn-outline btn-primary btn-pill btn-outline-2x font-12 btn-sm logout-link">Logout</a>
+						    </div>
+					    </div>
+				    </div>
+			    </div>
+		    </div>
+		    <div class="page-hdr-mobile">
+			    <div class="page-menu open-left-menu">
+				    <a href="#"><i class="las la-bars"></i></a>
+			    </div>
+			    <div class="page-menu open-page-menu-desktop">
+				    <a href="#"><i class="las la-ellipsis-h"></i></a>
+			    </div>
+		    </div>
+	    </div>
+    </div>
+</div>

@@ -1,0 +1,128 @@
+@page "/Medicines/Purchase/View/{id:int}"
+@using PharmaPOS.Application.Common.Authorization
+@model PharmaPOS.Razor.Pages.Purchase.ViewModel
+@{
+	const string pageTitle = "Purchase View";
+	ViewData["Title"] = pageTitle;
+
+	var canEdit = User.HasPermission(Permissions.Purchase.Edit);
+}
+
+<div class="page-title">
+	<div class="row align-items-center">
+		<div class="col-sm-7">
+			<h2 class="page-title-text d-inline-block">@ViewData["Title"]</h2>
+			<partial name="Partials/_Breadcrumb" model='new BreadcrumbItem[] { 
+				new("Purchase", Url.Page("/Purchase/Index")),
+				new(pageTitle) 
+			}' />
+		</div>
+		<div class="col-sm-5 text-right">
+			@if (canEdit)
+			{
+				<a
+					asp-page="/Purchase/Edit"
+					asp-route-id="@Model.Purchase.Id"
+					class="btn btn-primary btn-sm"><i class="las la-edit mr-2"></i>Edit</a>
+			}
+		</div>
+	</div>
+</div>
+<div class="inv-template mb-4">
+	<div class="inv-template-bdy table-responsive p-4">
+		<div class="meta table-responsive" style="border-top: 0">
+			<table>
+				<tbody>
+					<tr>
+						<td class="bill-to v-aling-bottom">
+							<div class="heading">Supplier</div>
+							<div class="title">@Model.Purchase.SupplierName</div>
+							<div class="text">@Model.Purchase.SupplierEmail</div>
+							<div class="text">@Model.Purchase.SupplierPhone</div>
+						</td>
+						<td class="info v-aling-bottom">
+							<table class="text-right">
+								<tbody>
+									<tr>
+										<td class="text">#</td>
+										<td class="text w-min-130">@Model.Purchase.Id.ToString("D5")</td>
+									</tr>
+									<tr>
+										<td class="text">Purchase Date</td>
+										<td class="text w-min-130">@Model.Purchase.Date.Format()</td>
+									</tr>
+								</tbody>
+							</table>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<div class="item table-responsive">
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>BatchNo</th>
+						<th>ExpiryDate</th>
+						<th>PackingQty</th>
+						<th>Quantity</th>
+						<th>PurchasePrice</th>
+						<th>SalePrice</th>
+						<th>Gross</th>
+						<th>Discount</th>
+						<th>Tax</th>
+						<th>Price</th>
+					</tr>
+				</thead>
+				<tbody>
+					@foreach (var value in Model.Purchase.Items)
+					{
+						<tr>
+							<td>@value.Name</td>
+							<td>@value.Batch</td>
+							<td>@(DateTime.TryParse(value.Expiry, out var date) ? date.ExpiryVisibleFormat() : value.Expiry)</td>
+							<td>@value.Pqty</td>
+							<td>@value.Qty</td>
+							<td>@value.Purchaseprice</td>
+							<td>@value.SalePrice</td>
+							<td>@value.Gross</td>
+							<td>@value.DiscountValue</td>
+							<td>@value.TaxPrice</td>
+							<td>@value.Price</td>
+						</tr>
+					}
+					<tr class="total">
+						<td rowspan="5" colspan="7" class="blank"></td>
+						<td class="title" colspan="2">Sub Total</td>
+						<td class="value" colspan="2">@Model.Purchase.SubTotal.ToCrF2()</td>
+					</tr>
+					<tr class="total">
+						<td class="title" colspan="2">Tax</td>
+						<td class="value" colspan="2">@Model.Purchase.Tax.ToCrF2()</td>
+					</tr>
+					<tr class="total">
+						<td class="title" colspan="2">Discount</td>
+						<td class="value" colspan="2">@Model.Purchase.Discount.ToCrF2()</td>
+					</tr>
+					<tr class="total">
+						<td class="title" colspan="2">Amount</td>
+						<td class="value" colspan="2">@Model.Purchase.Amount.ToCrF2()</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<div class="note">
+			<table>
+				<tbody>
+					<tr>
+						<td class="block align-top">
+							<span>Note</span>
+							<p>@Model.Purchase.Note</p>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>

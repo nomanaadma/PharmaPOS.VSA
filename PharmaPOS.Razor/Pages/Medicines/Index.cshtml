@@ -1,0 +1,135 @@
+@page
+@using PharmaPOS.Application.Common.Authorization
+@model PharmaPOS.Razor.Pages.Medicines.IndexModel
+@{
+	const string pageTitle = "Medicines";
+	ViewData["Title"] = pageTitle;
+	var canAdd = User.HasPermission(Permissions.Medicine.Add);
+	var canView = User.HasPermission(Permissions.Medicine.View);
+	var canEdit = User.HasPermission(Permissions.Medicine.Edit);
+	var canDelete = User.HasPermission(Permissions.Medicine.Delete);
+	var canAction = canView || canEdit || canDelete;
+}
+
+<div class="page-title">
+	<div class="row align-items-center">
+		<div class="col-sm-4">
+			<h2 class="page-title-text d-inline-block">@ViewData["Title"]</h2>
+			<partial name="Partials/_Breadcrumb" model="new BreadcrumbItem[] { 
+				new(pageTitle) 
+			}" />
+		</div>
+		<div class="col-sm-8 text-right">
+			@if (canAdd)
+			{
+				<a class="btn btn-primary btn-sm" asp-page="/Medicines/Add">
+					<i class="las la-plus pr-2"></i> New Medicine
+				</a>
+			}
+		</div>
+	</div>
+</div>
+
+<div class="panel panel-default">
+	<div class="panel-body">
+		<div class="table-responsive">
+			<table class="table table-middle table-bordered table-striped datatable-table">
+				<thead>
+					<tr class="table-heading">
+						<th>#</th>
+						<th>Medicine</th>
+						<th>Company</th>
+						<th>Unit</th>
+						<th>Unit/Packing</th>
+						<th>Category</th>
+						<th>Storebox</th>
+						<th>Reorderlevel</th>
+						<th>Live Stock</th>
+						<th>Status</th>
+						@if (canAction)
+						{
+							<th></th>
+						}
+					</tr>
+				</thead>
+				<tbody>
+					@{ var index = 1; }
+					@foreach (var value in Model.Medicines)
+					{
+						<tr>
+							<td>@index</td>
+							<td>
+								<p class="m-0 text-primary">@value.Name</p>
+								<p class="m-0 text-muted small">@value.Generic</p>
+							</td>
+							<td>@value.Company</td>
+							<th>@value.Unit</th>
+							<td>@value.UnitPacking</td>
+							<td>@value.CategoryName</td>
+							<td>@value.StoreBox</td>
+							<td>@value.ReOrderLevel</td>
+							<td>
+								@if (value.LiveStock > 0)
+								{
+									<text>@value.LiveStock</text>
+								}
+							</td>
+							<td>
+								@if (value.MinLevel.HasValue && value.MinLevel.Value >= value.LiveStock)
+								{
+									<span class="badge badge-sm badge-danger">Minlevel</span>
+								}
+								else if (value.ReOrderLevel.HasValue && value.ReOrderLevel.Value >= value.LiveStock)
+								{
+									<span class="badge badge-sm badge-warning">Reorderlevel</span>
+								}
+								else
+								{
+									<span class="badge badge-sm badge-primary">Normal</span>
+								}
+							</td>
+							@if (canAction)
+							{
+								<td class="table-action">
+									@if (canView || canEdit)
+									{
+										<div class="dropdown d-inline-block">
+											<a class="text-primary edit dropdown-toggle" data-toggle="dropdown"><i class="las la-ellipsis-h"></i></a>
+											<ul class="dropdown-menu dropdown-menu-right">
+												@if (canView)
+												{
+													<li>
+														<a asp-page="/Medicines/View" asp-route-id="@value.Id"><i class="las la-laptop pr-2"></i>View</a>
+													</li>
+												}
+												@if (canEdit)
+												{
+													<li>
+														<a asp-page="/Medicines/Edit" asp-route-id="@value.Id"><i class="las la-edit pr-2"></i>Edit</a>
+													</li>
+												}
+											</ul>
+										</div>
+									}
+
+									@if (canDelete)
+									{
+										<a class="table-delete text-danger delete" data-toggle="tooltip" title="Delete">
+											<i class="las la-trash-alt"></i><input type="hidden" value="@value.Id">
+										</a>
+									}
+								</td>
+							}
+						</tr>
+						index++;
+					}
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+
+@if (canDelete)
+{
+	<partial name="Partials/_DeleteModal" model='@("/Medicines/Index")' />
+}

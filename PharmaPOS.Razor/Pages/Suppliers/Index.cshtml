@@ -1,0 +1,94 @@
+@page
+@using PharmaPOS.Application.Common.Authorization
+@model PharmaPOS.Razor.Pages.Suppliers.IndexModel
+@{
+	const string pageTitle = "Suppliers";
+	ViewData["Title"] = pageTitle;
+	
+	var canAdd = User.HasPermission(Permissions.Suppliers.Add);
+	var canEdit = User.HasPermission(Permissions.Suppliers.Edit);
+	var canDelete = User.HasPermission(Permissions.Suppliers.Delete);
+	var canAction = canEdit || canDelete;
+}
+
+<div class="page-title">
+	<div class="row align-items-center">
+		<div class="col-sm-4">
+			<h2 class="page-title-text d-inline-block">@ViewData["Title"]</h2>
+			<partial name="Partials/_Breadcrumb" model="new BreadcrumbItem[] { 
+				new(pageTitle) 
+			}" />
+		</div>
+		<div class="col-sm-8 text-right">
+			@if (canAdd)
+			{
+				<a class="btn btn-primary btn-sm" asp-page="/Suppliers/Add">
+					<i class="las la-plus pr-2"></i> New Supplier
+				</a>
+			}
+		</div>
+	</div>
+</div>
+
+<div class="panel panel-default">
+	<div class="panel-body">
+		<div class="table-responsive">
+			<table class="table table-middle table-bordered table-striped datatable-table">
+				<thead>
+					<tr class="table-heading">
+						<th>#</th>
+						<th>Name</th>
+						<th>Email Address</th>
+						<th>Phone Number</th>
+						<th>Address</th>
+						@if (canAction)
+						{
+							<th></th>
+						}
+					</tr>
+				</thead>
+				<tbody>
+					@{ var index = 1; }
+					@foreach (var value in Model.Suppliers)
+					{
+						<tr> 
+							<td>@index</td>
+							<td class="text-primary">@value.Name</td>
+							<td>@value.Email</td>
+							<td>@value.Phone</td>
+							<td>@value.Address</td>
+							@if (canAction)
+							{
+								<td class="table-action">
+									@if (canEdit)
+									{
+										<a class="text-primary"
+										   asp-page="/Suppliers/Edit"
+										   asp-route-id="@value.Id"
+										   data-toggle="tooltip"
+										   data-placement="top"
+										   title="Edit"><i class="las la-edit"></i></a>
+									}
+									
+									@if (canDelete)
+									{
+										<a class="table-delete text-danger delete" data-toggle="tooltip" title="Delete">
+											<i class="las la-trash-alt"></i>
+											<input type="hidden" value="@value.Id">
+										</a>
+									}
+								</td>
+							}
+						</tr>
+						index++;
+					}
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+
+@if (canDelete)
+{
+	<partial name="Partials/_DeleteModal" model='@("/Suppliers/Index")' />
+}

@@ -1,0 +1,272 @@
+@page "{id:int}"
+@using PharmaPOS.Application.Common.Authorization
+@model PharmaPOS.Razor.Pages.Medicines.ViewModel
+@{
+    const string pageTitle = "Medicine View";
+    ViewData["Title"] = pageTitle;
+
+    var canEdit = User.HasPermission(Permissions.Medicine.Edit);
+    var canViewPurchase = User.HasPermission(Permissions.Purchase.View);
+	var canEditPurchase = User.HasPermission(Permissions.Purchase.Edit);
+	var canEditStock = User.HasPermission(Permissions.Stock.View);
+	var canDeleteStock = User.HasPermission(Permissions.Stock.Delete);
+	var canAction = canViewPurchase || canEditPurchase || canEditStock || canDeleteStock;
+}
+
+<div class="page-title">
+    <div class="row align-items-center">
+        <div class="col-sm-12">
+            <h2 class="page-title-text d-inline-block">@ViewData["Title"]</h2>
+            <partial name="Partials/_Breadcrumb" model='new BreadcrumbItem[] { 
+				new("Medicine", Url.Page("/Medicines/Index")),
+				new(pageTitle) 
+			}' />
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-4">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div class="user-avtar">
+                    <span>@Model.Medicine.Name[..1]</span>
+                </div>
+                <div class="user-details text-center pt-3">
+                    <h3>@Model.Medicine.Name</h3>
+                    <ul class="v-menu text-left pt-3 nav d-block">
+                        <li>
+                            <a href="#medicine-info" class="active" data-toggle="tab">
+                                <i class="las la-info-circle"></i> <span>Medicine Info</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#medicine-stock" data-toggle="tab">
+                                <i class="las la-pills"></i> <span>Live Stock</span>
+                            </a>
+                        </li>
+                        <li>
+	                        <a href="#medicine-badstock" data-toggle="tab">
+		                        <i class="las la-archive"></i> <span>Bad Stock</span>
+	                        </a>
+                        </li>
+                        @if (canEdit)
+                        {
+                        <li>
+                            <a asp-page="/Medicines/Edit" asp-route-id="@Model.Medicine.Id">
+                                <i class="las la-edit"></i> <span>Edit</span>
+                            </a>
+                        </li>
+	                    }
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-8">
+        <div class="tab-content">
+            <div class="tab-pane fade show active" id="medicine-info">
+                <div class="panel panel-default">
+                    <div class="panel-head">
+                        <div class="panel-title">Medicine Info</div>
+                    </div>
+                    <div class="panel-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped patient-table">
+                                <tbody>
+                                    <tr>
+                                        <td>Medicine Name</td>
+                                        <td>@Model.Medicine.Name</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Company</td>
+                                        <td>@Model.Medicine.Company</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Generic</td>
+                                        <td>@Model.Medicine.Generic</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Unit</td>
+                                        <td>@Model.Medicine.Unit</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Unitpacking</td>
+                                        <td>@Model.Medicine.UnitPacking</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Medicine Group</td>
+                                        <td>@Model.Medicine.MedicineGroup</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Category</td>
+                                        <td>@Model.Medicine.CategoryName</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Store Box</td>
+                                        <td>@Model.Medicine.StoreBox</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Min Level</td>
+                                        <td>@Model.Medicine.MinLevel</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Reorder Level</td>
+                                        <td>@Model.Medicine.ReOrderLevel</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Note</td>
+                                        <td>@Model.Medicine.Note</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Created Date</td>
+                                        <td>@Model.Medicine.CreatedDate?.Format()</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="medicine-stock">
+                <div class="panel panel-default">
+                    <div class="panel-head">
+                        <div class="panel-title">Live Stock</div>
+                    </div>
+                    <div class="panel-body">
+                        <div class="table-responsive stock-table">
+                            <table class="table table-middle table-bordered table-striped datatable-count-table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Batch</th>
+                                        <th>Expiry</th>
+                                        <th>Purchase Price</th>
+                                        <th>Sale Price</th>
+                                        <th>Qty</th>
+                                        <th>Sold</th>
+                                        <th>Live Stock</th>
+                                        @if (canAction)
+                                        {
+	                                        <th></th>
+                                        }
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{ var liveIndex = 1; }
+                                    @foreach (var value in Model.LiveStock)
+                                    {
+                                        <tr>
+                                            <td>@(liveIndex++)</td>
+                                            <td class="batch text-primary">@value.Batch</td>
+                                            <td class="expiry text-danger">@value.Expiry</td>
+                                            <td>@value.PurchasePrice.ToCrF2()</td>
+                                            <td>@value.SalePrice.ToCrF2()</td>
+                                            <td class="qty">@value.Qty</td>
+                                            <td class="sold">@value.Sold</td>
+                                            <td class="available">@value.Available.ToZeroHash()</td>
+                                            @if (canAction)
+                                            {
+	                                            <td class="table-action">
+		                                            @if (canViewPurchase || canEditPurchase || canEditStock)
+		                                            {
+			                                            <div class="dropdown d-inline-block">
+				                                            <a class="text-primary edit dropdown-toggle" data-toggle="dropdown"><i class="las la-ellipsis-h"></i></a>
+				                                            <ul class="dropdown-menu dropdown-menu-right">
+					                                            @if(canEditStock)
+					                                            {
+					                                                <li><a class="edit-stock" data-id="@value.Id" data-medicineid="@value.MedicineId" data-medicine="@value.Name"><i class="las la-pen-nib pr-2"></i>Update Stock</a></li>
+					                                            }
+					                                            @if(canViewPurchase)
+					                                            {
+					                                                <li><a asp-page="/Purchase/View" asp-route-id="@value.PurchaseId"><i class="las la-laptop pr-2"></i>Purchase View</a></li>
+					                                            }
+					                                            @if(canEditPurchase) 
+					                                            {
+					                                                <li><a asp-page="/Purchase/Edit" asp-route-id="@value.PurchaseId"><i class="las la-edit pr-2"></i>Purchase Edit</a></li>
+					                                            }
+				                                            </ul>
+			                                            </div>
+		                                            }
+		                                            @if (canDeleteStock)
+		                                            {
+			                                            <a class="table-delete text-danger delete" data-toggle="tooltip" title="Delete">
+				                                            <i class="las la-trash-alt"></i><input type="hidden" value="@value.Id">
+			                                            </a>
+		                                            }
+	                                            </td>
+                                            }
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="medicine-badstock">
+                <div class="panel panel-default">
+                    <div class="panel-head">
+                        <div class="panel-title">Bad Stock</div>
+                    </div>
+                    <div class="panel-body">
+                        <div class="table-responsive stock-table">
+                            <table class="table table-middle table-bordered table-striped datatable-count-table stock-list">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Batch</th>
+                                        <th>Expiry</th>
+                                        <th>Purchase Price</th>
+                                        <th>Sale Price</th>
+                                        <th>Qty</th>
+                                        <th>Sold</th>
+                                        @if (canDeleteStock)
+                                        {
+	                                        <th></th>
+                                        }
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{ var badIndex = 1; }
+                                    @foreach (var value in Model.BadStock)
+                                    {
+                                        <tr>
+                                            <td>@(badIndex++)</td>
+                                            <td class="batch text-primary">@value.Batch</td>
+                                            <td class="expiry text-danger">@value.Expiry</td>
+                                            <td>@value.PurchasePrice.ToCrF2()</td>
+                                            <td>@value.SalePrice.ToCrF2()</td>
+                                            <td class="qty">@value.Qty</td>
+                                            <td class="sold">@value.Sold</td>
+                                            @if (canDeleteStock)
+                                            {
+	                                            <td class="table-action">
+		                                            <a class="table-delete text-danger delete" data-toggle="tooltip" title="Delete"><i class="las la-trash-alt"></i><input type="hidden" value="@value.Id"></a>
+	                                            </td>
+                                            }
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (canEditStock)
+{
+	<partial name="Partials/_EditStockModal" />
+}
+
+@if (canDeleteStock)
+{
+	<partial name="Partials/_DeleteModal" model='@("Stock")' />
+}
+
+@section Scripts {
+	<script type="text/javascript" src="~/js/stock.js"></script>
+}

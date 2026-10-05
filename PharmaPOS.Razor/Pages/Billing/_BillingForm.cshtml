@@ -1,0 +1,255 @@
+@model PharmaPOS.Razor.Models.BillingFormModel
+
+@if (Model.Id > 0)
+{
+	<input type="hidden" asp-for="Id" />
+}
+
+<div class="panel panel-default">
+	<div class="panel-body">
+		<div class="row">
+			<div class="col-md-6">
+				<div class="form-group">
+					<label>Name<span class="form-required">*</span></label>
+					<div class="input-group">
+						<div class="input-group-prepend"><span class="input-group-text"><i class="las la-user"></i></span></div>
+						<input type="text" asp-for="Name" class="form-control customer-name" placeholder="Name">
+						<input type="hidden" asp-for="CustomerId" class="customer-id">
+					</div>
+					<span asp-validation-for="Name" class="text-danger"></span>
+				</div>
+			</div>
+			<div class="col-md-3">
+				<div class="form-group">
+					<label>Email Address</label>
+					<div class="input-group">
+						<div class="input-group-prepend"><span class="input-group-text"><i class="las la-envelope"></i></span></div>
+						<input type="email" asp-for="Email" class="form-control customer-mail" placeholder="Email Address">
+					</div>
+					<span asp-validation-for="Email" class="text-danger"></span>
+				</div>
+			</div>
+			<div class="col-md-3">
+				<div class="form-group">
+					<label>Mobile Number</label>
+					<div class="input-group">
+						<div class="input-group-prepend"><span class="input-group-text"><i class="las la-mobile"></i></span></div>
+						<input type="text" asp-for="Mobile" class="form-control customer-mobile" placeholder="Mobile Number">
+					</div>
+					<span asp-validation-for="Mobile" class="text-danger"></span>
+				</div>
+			</div>
+			<div class="col-md-3">
+				<div class="form-group">
+					<label>Date <span class="form-required">*</span></label>
+					<div class="input-group">
+						<div class="input-group-prepend"><span class="input-group-text"><i class="las la-calendar-alt"></i></span></div>
+						<input asp-for="Date" type="text" class="form-control bg-white date" placeholder="Billing Date" readonly/>
+					</div>
+					<span asp-validation-for="Date" class="text-danger"></span>
+				</div>
+			</div>
+			<div class="col-md-3">
+				<div class="form-group">
+					<label>Payment Method <span class="form-required">*</span></label>
+					<div class="input-group">
+						<div class="input-group-prepend"><span class="input-group-text"><i class="las la-credit-card"></i></span></div>
+						<select asp-for="Method" asp-items="Model.PaymentMethods" class="custom-select"></select>
+					</div>
+					<span asp-validation-for="PaymentMethods" class="text-danger"></span>
+				</div>
+			</div>
+		</div>
+		<div class="billing-items table-responsive mb-4">
+			<table class="table table-input table-middle">
+				<thead>
+				<tr>
+					<th>Name<span class="form-required">*</span></th>
+					<th style="min-width: 100px;">Batch No<span class="form-required">*</span></th>
+					<th>ExpiryDate<span class="form-required">*</span></th>
+					<th>Qty * | Available Qty</th>
+					<th>Sale Price<span class="form-required">*</span></th>
+					<th>Gross</th>
+					<th>Discount</th>
+					<th>Tax</th>
+					<th>Price<span class="form-required">*</span></th>
+					<th></th>
+				</tr>
+				</thead>
+				<tbody>
+				@{
+					decimal availableQuantity = 0;
+				}
+				@if (Model.Items.Any())
+				{
+					for (var i = 0; i < Model.Items.Count; i++)
+					{
+						var currentBatches = Model.Items[i].Batches;
+						var currentBatchId = Model.Items[i].Batch;
+
+						<tr class="item-row">
+							<td>
+								<input type="text" asp-for="Items[i].Name" class="form-control item-name" required>
+								<input type="hidden" asp-for="Items[i].MedicineId" class="form-control item-medicine-id" required>
+							</td>
+							<td >
+								<select asp-for="Items[i].Batch" class="custom-select item-batch" required>
+									<option value="">Select</option>
+									@foreach (var batchf in currentBatches)
+									{
+										if (batchf.Id == currentBatchId)
+										{
+											availableQuantity = batchf.Qty - batchf.Sold;
+										}
+										<option value="@batchf.Id">@batchf.Batch</option>
+									}
+								</select>
+								<input type="hidden" asp-for="Items[i].BatchName" class="item-batch-name">
+							</td>
+
+							<td>
+								<input type="text" asp-for="Items[i].Expiry" class="form-control item-expiry bg-white" required readonly>
+							</td>
+							<td>
+								<div class="input-group">
+									<input type="text" asp-for="Items[i].Qty" asp-format="{0:0.##}" class="form-control item-qty" required>
+									<div class="input-group-prepend"><span class="item-available-qty input-group-text">@availableQuantity.ToZeroHash()</span></div>
+								</div>
+							</td>
+							<td>
+								<input type="text" asp-for="Items[i].SalePrice" class="form-control item-sale" required>
+							</td>
+							<td>
+								<input type="text" readonly class="item-gross" asp-for="Items[i].Gross"/>
+							</td>
+							<td>
+								<div class="row no-gutters">
+									<div class="col">
+										<select asp-for="Items[i].DiscountType" class="custom-select border-light item-discounttype" 
+										        asp-items="Html.GetEnumSelectList<DiscountType>()">
+										</select>
+									</div>
+									<div class="col">
+										<textarea asp-for="Items[i].Discount" class="item-discount"></textarea>
+										<input asp-for="Items[i].DiscountValue" type="text" class="item-discountvalue" readonly/>
+									</div>
+								</div>
+							</td>
+							<td class="invoice-tax">
+								<input type="text" asp-for="Items[i].Tax" class="item-tax">
+								<input type="text" readonly asp-for="Items[i].TaxPrice" class="item-taxprice">
+							</td>
+							<td>
+								<input type="text" asp-for="Items[i].Price" asp-format="{0:0.##}" class="form-control bg-white item-price" required readonly>
+							</td>
+							<td>
+								<a class="badge badge-danger badge-sm badge-pill delete m-1">Delete</a>
+							</td>
+						</tr>
+					}
+				}
+				else
+				{
+					<tr class="item-row">
+						<td>
+							<input type="text" name="Input.Items[0].Name" class="form-control item-name" required>
+							<input type="hidden" name="Input.Items[0].MedicineId" class="form-control item-medicine-id" required>
+						</td>
+						<td>
+							<select name="Input.Items[0].Batch" class="custom-select item-batch" required></select>
+							<input type="hidden" name="Input.Items[0].BatchName" class="item-batch-name">
+						</td>
+						<td>
+							<input type="text" name="Input.Items[0].Expiry" class="form-control item-expiry bg-white" required readonly>
+						</td>
+						<td>
+							<div class="input-group">
+								<input type="text" name="Input.Items[0].Qty" class="form-control item-qty" required>
+								<div class="input-group-prepend"><span class="item-available-qty input-group-text">0</span></div>
+							</div>
+						</td>
+						<td>
+							<input type="text" name="Input.Items[0].Saleprice" class="form-control item-sale" required>
+						</td>
+						<td>
+							<input type="text" readonly class="item-gross" name="Input.Items[0].Gross"/>
+						</td>
+						<td class="">
+							<div class="row no-gutters">
+								<div class="col">
+									<select name="Input.Items[0].Discounttype" class="custom-select border-light item-discounttype" 
+									        asp-items="Html.GetEnumSelectList<DiscountType>()">
+									</select>
+								</div>
+								<div class="col">
+									<textarea name="Input.Items[0].Discount" class="item-discount">0</textarea>
+									<input type="text" name="Input.Items[0].Discountvalue" class="item-discountvalue" value="0" readonly/>
+								</div>
+							</div>
+						</td>
+						<td class="invoice-tax">
+							<input type="text" name="Input.Items[0].Tax" class="item-tax" value="0">
+							<input type="text" readonly name="Input.Items[0].Taxprice" class="item-taxprice" value="0">
+						</td>
+						<td>
+							<input type="text" name="Input.Items[0].Price" class="form-control bg-white item-price" required readonly>
+						</td>
+						<td>
+							<a class="badge badge-danger badge-sm badge-pill delete m-1">Delete</a>
+						</td>
+					</tr>
+				}
+				<tr>
+					<td colspan="10">
+						<div class="add-items d-inline-block">
+							<a class="btn btn-success btn-sm m-1"><i class="icon-plus mr-1"></i> Add Item</a>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="3" class="blank"></td>
+					<td colspan="3" class="total-line"><label class="p-2">Sub Total</label></td>
+					<td colspan="4" class="total-value">
+						<input asp-for="SubTotal" type="text" class="form-transparent p-2 total-price" readonly/>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="3" class="blank"></td>
+					<td colspan="3" class="total-line"><label class="p-2">Discount</label></td>
+					<td colspan="4" class="total-value">
+						<input asp-for="Discount" type="text" class="form-transparent p-2 total-discount" readonly/>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="3" class="blank"></td>
+					<td colspan="3" class="total-line"><label class="p-2">Tax</label></td>
+					<td colspan="4" class="total-value">
+						<input asp-for="Tax" type="text" class="form-transparent p-2 total-tax" readonly/>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="3" class="blank"></td>
+					<td colspan="3" class="total-line"><label class="p-2">Amount</label></td>
+					<td colspan="4" class="total-value">
+						<input asp-for="Amount" type="text" class="form-transparent p-2 total-amount" readonly/>
+					</td>
+				</tr>
+				</tbody>
+			</table>
+		</div>
+		<div class="row">
+			<div class="col-md-6">
+				<div class="form-group">
+					<label>Note</label>
+					<div class="input-group">
+						<div class="input-group-prepend"><span class="input-group-text"><i class="las la-paragraph"></i></span></div>
+						<textarea asp-for="Note" class="form-control" placeholder="Enter Note or Comment . . ."></textarea>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="panel-footer text-center">
+		<button type="submit" name="submit" class="btn btn-primary"><i class="las la-save pr-2"></i> Save</button>
+	</div>
+</div>

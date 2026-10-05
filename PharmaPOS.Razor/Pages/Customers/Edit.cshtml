@@ -1,0 +1,27 @@
+@page "{id:int}"
+@model PharmaPOS.Razor.Pages.Customers.EditModel
+@{
+	var pageTitle = "Edit Customer";
+	ViewData["Title"] = pageTitle; 
+}
+
+<div class="page-title">
+	<div class="row align-items-center">
+		<div class="col-sm-12">
+			<h2 class="page-title-text d-inline-block">@ViewData["Title"]</h2>
+			<partial name="Partials/_Breadcrumb" model='new BreadcrumbItem[] { 
+				new("Customers", Url.Page("/Customers/Index")),
+				new(pageTitle) 
+			}' />
+		</div>
+	</div>
+</div>
+
+<form method="post">
+	@Html.AntiForgeryToken()
+	<partial name="_CustomerForm" for="Input" />
+</form>
+
+@section Scripts {
+	<partial name="_ValidationScriptsPartial" />
+}

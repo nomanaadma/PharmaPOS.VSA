@@ -1,0 +1,96 @@
+@model PharmaPOS.Razor.Models.CustomerViewModel
+
+@if (Model.Id > 0)
+{
+	<input type="hidden" asp-for="Id" />
+}
+<div class="panel panel-default">
+	<div class="panel-body">
+		<div class="row">
+			<div class="col-md-3">
+				<div class="form-group">
+					<label>First Name <span class="form-required">*</span></label>
+					<div class="input-group">
+						<div class="input-group-prepend">
+							<span class="input-group-text"><i class="las la-user"></i></span>
+						</div>
+						<input type="text" asp-for="FirstName" class="form-control" placeholder="Enter First Name . . . ">
+					</div>
+					<span asp-validation-for="FirstName" class="text-danger"></span>
+				</div>
+			</div>
+			<div class="col-md-3">
+				<div class="form-group">
+					<label>Last Name <span class="form-required">*</span></label>
+					<div class="input-group">
+						<div class="input-group-prepend">
+							<span class="input-group-text"><i class="las la-user"></i></span>
+						</div>
+						<input type="text" asp-for="LastName" class="form-control" placeholder="Enter Last Name . . . ">
+					</div>
+					<span asp-validation-for="LastName" class="text-danger"></span>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="form-group">
+					<label>Email Address <span class="form-required">*</span></label>
+					<div class="input-group">
+						<div class="input-group-prepend">
+							<span class="input-group-text"><i class="las la-envelope"></i></span>
+						</div>
+						<input type="email" asp-for="Email" class="form-control" placeholder="Enter Email Address . . . ">
+					</div>
+					<span asp-validation-for="Email" class="text-danger"></span>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="form-group">
+					<label>Mobile Number <span class="form-required">*</span></label>
+					<div class="input-group">
+						<div class="input-group-prepend">
+							<span class="input-group-text"><i class="las la-mobile"></i></span>
+						</div>
+						<input type="text" asp-for="Mobile" class="form-control" placeholder="Enter Mobile Number . . . ">
+					</div>
+					<span asp-validation-for="Mobile" class="text-danger"></span>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="row">
+					<div class="col-md-6">
+						<div class="form-group">
+							<label>Gender <span class="form-required">*</span></label>
+							<div class="input-group">
+								<div class="input-group-prepend">
+									<span class="input-group-text"><i class="las la-genderless"></i></span>
+								</div>
+								<select asp-for="Gender" class="custom-select" asp-items="Html.GetEnumSelectList<Gender>()"></select>
+							</div>
+							<span asp-validation-for="Gender" class="text-danger"></span>
+						</div>
+					</div>
+					@if (Model.Id > 0)
+					{
+						<div class="col-md-6">
+							<div class="form-group">
+								<label>Status <span class="form-required">*</span></label>
+								<div class="input-group">
+									<div class="input-group-prepend">
+										<span class="input-group-text"><i class="las la-check-square"></i></span>
+									</div>
+									<select asp-for="Status" class="custom-select" asp-items="Html.GetEnumSelectList<Status>()">
+									</select>
+								</div>
+								<span asp-validation-for="Status" class="text-danger"></span>
+							</div>
+						</div>
+					}
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="panel-footer text-center">
+		<button type="submit" class="btn btn-primary"><i class="las la-save pr-2"></i> Save</button>
+		<a asp-page="/Customers/Index" class="btn btn-secondary"><i class="las la-times pr-2"></i> Cancel</a>
+	</div>
+</div>

@@ -1,0 +1,39 @@
+@page
+@model PharmaPOS.Razor.Pages.Dashboard.StatusModel
+@{
+	if (User.Identity?.IsAuthenticated == false)
+	{
+		Layout = "~/Areas/Identity/Pages/Shared/_Auth.cshtml";
+	}
+	
+    ViewData["Title"] = "Status " + Model.Code;
+    
+    var message = Model.Code switch
+    {
+        400 => "Bad Request. The server could not understand the request due to invalid syntax.",
+        401 => "Unauthorized. Access is denied due to invalid credentials.",
+        403 => "Forbidden. You don't have permission to access this resource.",
+        404 => "Not Found. The resource you are looking for could not be found.",
+        500 => "Internal Server Error. Something went wrong on our end.",
+        _ => "An unexpected error occurred."
+    };
+}
+
+<div class="row justify-content-center">
+    <div class="status-container text-center mt-5">
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+            <div class="card-body p-5">
+                <h1 class="display-3 fw-bold text-dark mb-2">@Model.Code</h1>
+                <h4 class="text-muted mb-4">@message</h4>
+                
+                <p class="text-secondary mb-5">
+	                If you believe this is an error, please contact your system administrator.
+                </p>
+                
+                <a href="javascript:history.back()" class="btn btn-primary rounded-pill px-4 py-2">
+	                <i class="fe fe-arrow-left me-2"></i> Back
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,28 @@
+@page "/Medicines/Billing/Edit/{id:int}"
+@model PharmaPOS.Razor.Pages.Billing.EditModel
+@{
+	var pageTitle = "Edit Bill";
+	ViewData["Title"] = pageTitle;
+}
+
+<div class="page-title">
+	<div class="row align-items-center">
+		<div class="col-sm-12">
+			<h2 class="page-title-text d-inline-block">@ViewData["Title"]</h2>
+			<partial name="Partials/_Breadcrumb" model='new BreadcrumbItem[] { 
+				new("POS/Bill", Url.Page("/Billing/Index")),
+				new(pageTitle) 
+			}' />
+		</div>
+	</div>
+</div>
+
+<form method="post" class="billing_form">
+	@Html.AntiForgeryToken()
+	<partial name="_BillingForm" for="Input" />
+</form>
+
+@section Scripts {
+	<partial name="_ValidationScriptsPartial" />
+	<script type="text/javascript" src="~/js/billing.js"></script>
+}

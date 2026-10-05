@@ -1,0 +1,126 @@
+@page "{id:int}"
+@model PharmaPOS.Razor.Pages.Customers.ViewModel
+@{
+    ViewData["Title"] = "Customer View";
+    var fullName = Model.Customer.FirstName + " " + Model.Customer.LastName;
+}
+
+<div class="page-title">
+    <div class="row align-items-center">
+        <div class="col-sm-12">
+            <h2 class="page-title-text d-inline-block">@ViewData["Title"]</h2>
+            <partial name="Partials/_Breadcrumb" model='new BreadcrumbItem[] { 
+				new("Customers", Url.Page("/Customers/Index")),
+				new(fullName) 
+			}' />
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div class="user-avtar">
+                    <span>@Model.Customer.FirstName[..1]</span>
+                </div>
+                <div class="user-details text-center pt-3">
+                    <h3>@fullName</h3>
+                    <ul class="v-menu text-left pt-3 nav d-block">
+                        <li>
+                            <a href="#customer-info" class="active" data-toggle="tab">
+                                <i class="las la-info-circle"></i> <span>Customer Info</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#customer-bills" data-toggle="tab">
+                                <i class="las la-cart-plus"></i> <span>POS/Bills</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a asp-page="/Customers/Edit" asp-route-id="@Model.Customer.Id">
+                                <i class="las la-edit"></i> <span>Edit Customer</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="tab-content">
+            <div class="tab-pane fade show active" id="customer-info">
+                <div class="panel panel-default">
+                    <div class="panel-head">
+                        <div class="panel-title">Customer Info</div>
+                    </div>
+                    <div class="panel-body">
+                        <table class="table table-striped patient-table">
+                            <tbody>
+                                <tr>
+                                    <td>Email Address</td>
+                                    <td>@Model.Customer.Email</td>
+                                </tr>
+                                <tr>
+                                    <td>Mobile Number</td>
+                                    <td>@Model.Customer.Mobile</td>
+                                </tr>
+                                <tr>
+                                    <td>Gender</td>
+                                    <td>@Model.Customer.Gender</td>
+                                </tr>
+                                <tr>
+                                    <td>Status</td>
+                                    <td>
+                                        <span class="label @Model.Customer.Status.GetCssClass()">@Model.Customer.Status</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Created Date</td>
+                                    <td>@Model.Customer.CreatedDate?.Format()</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="customer-bills">
+                <div class="panel panel-default">
+                    <div class="panel-head">
+                        <div class="panel-title">Customer's Bills</div>
+                    </div>
+                    <div class="panel-body">
+                        <table class="table table-middle table-bordered table-striped datatable-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Amount</th>
+                                    <th>Bill Date</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var value in Model.RecentBills)
+                                {
+                                    <tr>
+                                        <td class="text-primary">@value.Id.ToString("D5")</td>
+                                        <td>@value.Amount.ToCrF2()</td>
+                                        <td>@value.BillDate.Format()</td>
+                                        <td class="table-action">
+	                                        <a 
+		                                        asp-page="/Billing/View"
+		                                        asp-route-id="@value.Id"
+												class="text-primary edit" data-toggle="tooltip" title="View" target="_blank">
+                                                <i class="las la-laptop"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,271 @@
+@page
+@using PharmaPOS.Application.Common.Authorization
+@model PharmaPOS.Razor.Pages.Setting.IndexModel
+@{
+	const string pageTitle = "System Info";
+	ViewData["Title"] = pageTitle;
+}
+
+<div class="page-title">
+	<div class="row align-items-center">
+		<div class="col-sm-12">
+			<h2 class="page-title-text d-inline-block">@ViewData["Title"]</h2>
+			<partial name="Partials/_Breadcrumb" model="new BreadcrumbItem[] { 
+				new(pageTitle) 
+			}" />
+		</div>
+	</div>
+</div>
+
+<form method="post">
+	@Html.AntiForgeryToken()
+	<div class="panel panel-default">
+		<div class="panel-body">
+			<div class="tab-content pt-4">
+				<div class="tab-pane active" id="setting-info">
+					<div class="row">
+						<div class="col-md-12">
+							<div class="row pb-2">
+								<!-- Logo -->
+								<div class="col-md-3">
+									<div class="form-group">
+										<label class="d-block">Logo</label>
+										<div class="image-upload" style="@(string.IsNullOrEmpty(Model.Input.Logo) ? "" : "display:none")">
+											@if (User.HasPermission(Permissions.Media.Upload))
+											{
+												<a>Upload</a>
+											}
+										</div>
+										<div class="saved-picture" style="@(string.IsNullOrEmpty(Model.Input.Logo) ? "display:none" : "")">
+											@if (!string.IsNullOrEmpty(Model.Input.Logo))
+											{
+												<img class="img-thumbnail" src="/uploads/@Model.Input.Logo" alt="">
+											}
+											<input type="hidden" asp-for="Input.Logo">
+										</div>
+										<div class="saved-picture-delete" data-toggle="tooltip" data-placement="right" title="Remove" style="@(string.IsNullOrEmpty(Model.Input.Logo) ? "display:none" : "")">
+											@if(User.HasPermission(Permissions.Media.Delete)) {
+												<a class="las la-trash-alt"></a>
+											}
+										</div>
+									</div>
+								</div>
+
+								<!-- Logo Icon -->
+								<div class="col-md-3">
+									<div class="form-group">
+										<label class="d-block">Logo Icon</label>
+										<div class="image-upload" style="@(string.IsNullOrEmpty(Model.Input.LogoIcon) ? "" : "display:none")">
+											@if(User.HasPermission(Permissions.Media.Upload)) {
+												<a>Upload</a>
+											}
+										</div>
+										<div class="saved-picture" style="@(string.IsNullOrEmpty(Model.Input.LogoIcon) ? "display:none" : "")">
+											@if (!string.IsNullOrEmpty(Model.Input.LogoIcon))
+											{
+												<img class="img-thumbnail" src="/uploads/@Model.Input.LogoIcon" alt="">
+											}
+											<input type="hidden" asp-for="Input.LogoIcon">
+										</div>
+										<div class="saved-picture-delete" data-toggle="tooltip" data-placement="right" title="Remove" style="@(string.IsNullOrEmpty(Model.Input.LogoIcon) ? "display:none" : "")">
+											@if(User.HasPermission(Permissions.Media.Delete)) {
+												<a class="las la-trash-alt"></a>
+											}
+										</div>
+									</div>
+								</div>
+
+								<!-- Login Background -->
+								<div class="col-md-3">
+									<div class="form-group">
+										<label class="d-block">Login background</label>
+										<div class="image-upload" style="@(string.IsNullOrEmpty(Model.Input.LgBackground) ? "" : "display:none")">
+											@if(User.HasPermission(Permissions.Media.Upload)) {
+												<a>Upload</a>
+											}
+										</div>
+										<div class="saved-picture" style="@(string.IsNullOrEmpty(Model.Input.LgBackground) ? "display:none" : "")">
+											@if (!string.IsNullOrEmpty(Model.Input.LgBackground))
+											{
+												<img class="img-thumbnail" src="/uploads/@Model.Input.LgBackground" alt="">
+											}
+											<input type="hidden" asp-for="Input.LgBackground">
+										</div>
+										<div class="saved-picture-delete" data-toggle="tooltip" data-placement="right" title="Remove" style="@(string.IsNullOrEmpty(Model.Input.LgBackground) ? "display:none" : "")">
+											@if(User.HasPermission(Permissions.Media.Delete)) {
+												<a class="las la-trash-alt"></a>
+											}
+										</div>
+									</div>
+								</div>
+
+								<!-- Favicon -->
+								<div class="col-md-3">
+									<div class="form-group">
+										<label class="d-block">Favicon</label>
+										<div class="image-upload" style="@(string.IsNullOrEmpty(Model.Input.Favicon) ? "" : "display:none")">
+											@if(User.HasPermission(Permissions.Media.Upload)) {
+												<a>Upload</a>
+											}
+										</div>
+										<div class="saved-picture" style="@(string.IsNullOrEmpty(Model.Input.Favicon) ? "display:none" : "")">
+											@if (!string.IsNullOrEmpty(Model.Input.Favicon))
+											{
+												<img class="img-thumbnail" src="/uploads/@Model.Input.Favicon" alt="">
+											}
+											<input type="hidden" asp-for="Input.Favicon">
+										</div>
+										<div class="saved-picture-delete" data-toggle="tooltip" data-placement="right" title="Remove" style="@(string.IsNullOrEmpty(Model.Input.Favicon) ? "display:none" : "")">
+											@if(User.HasPermission(Permissions.Media.Delete)) {
+												<a class="las la-trash-alt"></a>
+											}
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="col-md-6">
+							<div class="form-group">
+								<label>Store Name <span class="form-required">*</span></label>
+								<div class="input-group">
+									<div class="input-group-prepend">
+										<span class="input-group-text"><i class="las la-tag"></i></span>
+									</div>
+									<input type="text" asp-for="Input.Name" class="form-control" placeholder="Enter Store Name . . ." required>
+								</div>
+								<span asp-validation-for="Input.Name" class="text-danger"></span>
+							</div>
+							<div class="form-group">
+								<label>Store Legal Name <span class="form-required">*</span></label>
+								<div class="input-group">
+									<div class="input-group-prepend">
+										<span class="input-group-text"><i class="las la-id-badge"></i></span>
+									</div>
+									<input type="text" asp-for="Input.LegalName" class="form-control" placeholder="Enter Store Legal Name . . ." required>
+								</div>
+								<span asp-validation-for="Input.LegalName" class="text-danger"></span>
+							</div>
+						</div>
+
+						<div class="col-md-6">
+							<div class="form-group">
+								<label>Email Address <span class="form-required">*</span></label>
+								<div class="input-group">
+									<div class="input-group-prepend">
+										<span class="input-group-text"><i class="las la-envelope"></i></span>
+									</div>
+									<input type="email" asp-for="Input.Mail" class="form-control" placeholder="Enter Email Address . . ." required>
+								</div>
+								<span asp-validation-for="Input.Mail" class="text-danger"></span>
+							</div>
+							<div class="form-group">
+								<label>Phone Number <span class="form-required">*</span></label>
+								<div class="input-group">
+									<div class="input-group-prepend">
+										<span class="input-group-text"><i class="las la-mobile"></i></span>
+									</div>
+									<input type="text" asp-for="Input.Phone" class="form-control" placeholder="Enter Phone Number . . ." required>
+								</div>
+								<span asp-validation-for="Input.Phone" class="text-danger"></span>
+							</div>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-md-3">
+							<div class="form-group">
+								<label>Address Line 1</label>
+								<div class="input-group">
+									<div class="input-group-prepend">
+										<span class="input-group-text"><i class="las la-map-pin"></i></span>
+									</div>
+									<input type="text" asp-for="Input.AddressLine1" class="form-control" placeholder="Enter Address Line 1 . . .">
+								</div>
+							</div>
+						</div>
+						<div class="col-md-3">
+							<div class="form-group">
+								<label>Address Line 2</label>
+								<div class="input-group">
+									<div class="input-group-prepend">
+										<span class="input-group-text"><i class="las la-map-pin"></i></span>
+									</div>
+									<input type="text" asp-for="Input.AddressLine2" class="form-control" placeholder="Enter Address Line 2 . . .">
+								</div>
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="form-group">
+								<label>City</label>
+								<div class="input-group">
+									<div class="input-group-prepend">
+										<span class="input-group-text"><i class="las la-map-signs"></i></span>
+									</div>
+									<input type="text" asp-for="Input.City" class="form-control" placeholder="Enter City . . .">
+								</div>
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="form-group">
+								<label>Country</label>
+								<div class="input-group">
+									<div class="input-group-prepend">
+										<span class="input-group-text"><i class="las la-map-marker"></i></span>
+									</div>
+									<input type="text" asp-for="Input.Country" class="form-control" placeholder="Enter Country . . .">
+								</div>
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="form-group">
+								<label>Postal/ZIP Code</label>
+								<div class="input-group">
+									<div class="input-group-prepend">
+										<span class="input-group-text"><i class="las la-map"></i></span>
+									</div>
+									<input type="text" asp-for="Input.Postal" class="form-control" placeholder="Enter Postal/ZIP Code . . .">
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="panel-footer text-center">
+			<button type="submit" name="submit" class="btn btn-primary"><i class="las la-save pr-2"></i> Save</button>
+		</div>
+	</div>
+</form>
+
+@if (User.HasPermission(Permissions.Media.List))
+{
+	<!-- Media Modal -->
+	<div id="media-upload" class="modal fade">
+		<div class="modal-dialog modal-xl">
+			<div class="modal-content">
+				<div class="modal-header">
+					<div class="media-hdr">
+						<p>Media <span>(Click On Image To Select)</span></p></div>
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
+				<div class="modal-body">
+					@if (User.HasPermission(Permissions.Media.Upload))
+					{
+						<div class="media-upload-container">
+							<form action="/media/upload" class="dropzone" id="media-dropzone" method="post" enctype="multipart/form-data">
+								<div class="fallback"><input name="file" type="file"/></div></form>
+						</div>
+						<div class="media-all pt-3"></div>
+						<input type="hidden" class="uploaded" value="0">
+					}
+				</div>
+			</div>
+		</div>
+	</div>
+}
+
+@section Scripts {
+	<partial name="_ValidationScriptsPartial" />
+	<script type="text/javascript" src="~/js/media.js"></script>
+}

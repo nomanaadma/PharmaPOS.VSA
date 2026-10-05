@@ -1,0 +1,182 @@
+@using PharmaPOS.Application.Common.Authorization
+@{
+	var currentPage = ViewContext.RouteData.Values["page"]?.ToString() ?? "/Index";
+	
+	// Map "/Index" to "Dashboard" for active state matching
+	var currentFolder = "Dashboard";
+	var currentFile = "Index";
+	
+	var parts = currentPage.Trim('/').Split('/');
+	if (parts.Length == 1)
+	{
+		if (!parts[0].Equals("Index", StringComparison.OrdinalIgnoreCase) && !string.IsNullOrEmpty(parts[0]))
+		{
+			currentFolder = parts[0];
+		}
+	}
+	else if (parts.Length >= 2)
+	{
+		currentFolder = parts[0];
+		currentFile = parts[1];
+	}
+
+	string IsActive(string folder, string? file = null)
+	{
+		var match = string.Equals(currentFolder, folder, StringComparison.OrdinalIgnoreCase);
+		
+		if (match && file != null)
+		{
+			match = string.Equals(currentFile, file, StringComparison.OrdinalIgnoreCase);
+		}
+		
+		return match ? "active" : "";
+	}
+
+	string[] IsHasSubActive(params string[] folders)
+	{
+		var matchRoute = folders.Any(f => string.Equals(currentFolder, f, StringComparison.OrdinalIgnoreCase));
+
+		if (!matchRoute)
+		{
+			return ["", "", ""];
+		}
+		
+		return
+		[
+			"active",
+			"rotate",
+			"style=\"display: block;\"",
+		];
+	}
+}
+
+<div class="menu-wrapper">
+	<div class="menu">
+		<ul>
+			@if (User.HasPermission(Permissions.Dashboard.View))
+			{
+				<li class="@IsActive("Dashboard")">
+					<a href="/"><i class="las la-chalkboard"></i><span>Dashboard</span></a>
+				</li>
+			}
+			@if (User.HasPermission(Permissions.Customer.List))
+			{
+				<li class="@IsActive("Customers")">
+					<a asp-page="/Customers/Index">
+						<i class="las la-user-md"></i>
+						<span>Customers</span>
+					</a>
+				</li>
+			}
+			@if (User.HasPermission(Permissions.Billing.List))
+			{
+				<li class="@IsActive("Billing")">
+					<a asp-page="/Billing/Index">
+						<i class="las la-cart-plus"></i>
+						<span>POS/Bill</span>
+					</a>
+				</li>
+			}
+			@if (User.HasPermission(Permissions.Purchase.List))
+			{
+				<li class="@IsActive("Purchase")">
+					<a asp-page="/Purchase/Index">
+						<i class="las la-file-invoice-dollar"></i>
+						<span>Purchase</span>
+					</a>
+				</li>
+			}
+			@if (User.HasPermission(Permissions.Stock.View))
+			{
+				<li class="@IsActive("Stock")">
+					<a asp-page="/Stock/Index">
+						<i class="las la-balance-scale"></i>
+						<span>Stock adjustment</span>
+					</a>
+				</li>
+			}
+
+			@if (User.HasPermission(Permissions.Medicine.List))
+			{
+				<li class="@IsActive("Medicines")">
+					<a asp-page="/Medicines/Index">
+						<i class="las la-pills"></i>
+						<span>Medicines</span>
+					</a>
+				</li>
+			}
+
+			@if (User.HasPermission(Permissions.Reports.View))
+			{
+				<li class="@IsActive("Reports")">
+					<a asp-page="/Reports/Index">
+						<i class="las la-chalkboard-teacher"></i>
+						<span>Report</span>
+					</a>
+				</li>
+			}
+			
+			@if (User.HasPermission(Permissions.User.List))
+			{
+				var subActive = IsHasSubActive("Users", "Roles");
+				
+				<li class="has-sub @subActive[0]">
+					<a><i class="las la-users"></i><span>Users</span><i class="arrow @subActive[1]"></i></a>
+					<ul class="sub-menu" @Html.Raw(subActive[2])>
+						<li class="@IsActive("Users")"><a asp-page="/Users/Index"><span>Users List</span></a></li>
+						
+						@if (User.IsInRole(Roles.Admin))
+						{
+							<li class="@IsActive("Roles")"><a asp-page="/Roles/Index"><span>User Role</span></a></li>
+						}
+					</ul>
+				</li>
+			}
+
+			@{
+				var canViewInfo = User.HasPermission(Permissions.Info.View);
+				var canViewCategory = User.HasPermission(Permissions.Category.List);
+				var canViewMethod = User.HasPermission(Permissions.PaymentMethod.List);
+				var canViewSupplier = User.HasPermission(Permissions.Suppliers.List);
+			}
+			
+			@if (canViewInfo || canViewCategory || canViewMethod || canViewSupplier)
+			{
+				var subActive = IsHasSubActive("Setting", "Categories", "PaymentMethods", "Suppliers");
+				
+				<li class="has-sub @subActive[0]">
+					<a><i class="las la-cog"></i><span>Setting</span><i class="arrow @subActive[1]"></i></a>
+					<ul class="sub-menu" @Html.Raw(subActive[2])>
+						@if(canViewInfo) {
+							<li class="@IsActive("Setting", "Index")"><a asp-page="/Setting/Index"><span>System Info</span></a></li>
+						}
+						
+						@if(canViewCategory) {
+							<li class="@IsActive("Categories")"><a asp-page="/Categories/Index"><span>Medicine Category</span></a></li>
+						}
+						
+						@if(canViewMethod) {
+							<li class="@IsActive("PaymentMethods")"><a asp-page="/PaymentMethods/Index"><span>Payment Methods</span></a></li>
+						}
+						
+						@if(canViewSupplier) {
+							<li class="@IsActive("Suppliers")"><a asp-page="/Suppliers/Index"><span>Suppliers</span></a></li>
+						}
+					</ul>
+				</li>
+			}
+			
+			<li>
+				<form id="logoutForm" class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="/">
+					<button id="logout" type="submit" class="nav-link btn btn-link text-dark border-0">Logout</button>
+				</form>
+
+				<a class="logout-link" href="javascript:void(0);">
+					<i class="las la-sign-out-alt"></i>
+					<span>Logout</span>
+				</a>
+
+			</li>
+		</ul>
+	</div>
+</div>

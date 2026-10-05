@@ -1,0 +1,13 @@
+# Build output
+**/bin/
+**/obj/
+
+# Local notes
+notes.txt
+
+.vs/
+.idea/
+*.user
+*.suo
+
+
